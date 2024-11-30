@@ -1,0 +1,271 @@
+[33mcommit c5d3a4a1f01038a1a89db1dd3c521b0aef3401b6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: alexanderadp <alexanderdelrosarioperez@gmail.com>
+Date:   Sun Nov 3 11:07:35 2024 -0400
+
+    Initial commit
+
+[33mcommit 411fecb51743212f3490eb29d3481739b267ef30[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Mon Sep 2 15:59:14 2024 +0300
+
+    Fixed warning
+
+[33mcommit 4c7b0c0f5db459ef36c7b8ca6962223cfd69d5be[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Mon Aug 5 09:27:58 2024 +0300
+
+    Refactor
+
+[33mcommit 3ba6d75db272be787ddebbd4692bc410c39594cc[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Sat Aug 3 11:36:25 2024 +0300
+
+    Update README.md
+
+[33mcommit b00460a670ead02ebb59e70d7f7ff166d06f601e[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Wed Jul 31 10:57:07 2024 +0300
+
+    Disable optimizer
+
+[33mcommit 51c93b25d06ef2ca183eb8ea5751568b42f90e65[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Wed Jul 31 10:51:09 2024 +0300
+
+    Fixed margin issue
+
+[33mcommit c4c2d47d54230063a62e76f35fb5fe1a45eb3082[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Wed Jul 31 10:47:30 2024 +0300
+
+    Set version as 4.1.0
+
+[33mcommit cb0f98582ade0e10b30430c85588fbab9a765fc5[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Wed Jul 31 10:45:31 2024 +0300
+
+    Add anim
+
+[33mcommit fa5009486a7ffc892f05942627f4a747bdbbaaec[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Wed Jul 31 10:40:41 2024 +0300
+
+    Change button location, fixed charts on mobile
+
+[33mcommit 2e3cfcc0d584c0466abcd7af2017608d4abfa071[m[33m ([m[1;33mtag: [m[1;33m4.0.0[m[33m)[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Tue Jul 30 14:52:36 2024 +0300
+
+    Update package-lock.json
+
+[33mcommit 894b9171e8c66e9e078e17d3289dc73fae850924[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 12:29:46 2024 +0300
+
+    Update colors for dark
+
+[33mcommit a611dd0f276348e44aa9b736df323251342ac381[m
+Merge: d45aee8 74003ad
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 12:12:44 2024 +0300
+
+    Merge branch 'master' of https://github.com/primefaces/sakai-vue
+
+[33mcommit d45aee8fdbf3b60f7f81d56fff592e26376794c6[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 12:12:41 2024 +0300
+
+    Add landing
+
+[33mcommit 74003ad08d52da01a9405981fcccf5b48152b3aa[m
+Merge: 767dd20 9cab42f
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Tue Jul 30 11:32:18 2024 +0300
+
+    Merge branch 'master' of https://github.com/primefaces/sakai-vue
+
+[33mcommit 767dd205b8afcfc8caee08a502999fa0d8cdca57[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Tue Jul 30 11:32:11 2024 +0300
+
+    Chart fixes
+
+[33mcommit 9cab42f25d92bec20c033d3f7f257360acb439c9[m
+Merge: 49e8209 fa8ce31
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 11:17:16 2024 +0300
+
+    Merge branch 'master' of https://github.com/primefaces/sakai-vue
+
+[33mcommit 49e82095c96a8b45dab791752a362440b81c84ac[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 11:17:12 2024 +0300
+
+    Cosmetic updates
+
+[33mcommit fa8ce31973d06ea2470e600cf778d41cdc630836[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Tue Jul 30 11:01:50 2024 +0300
+
+    Update ListDoc.vue
+
+[33mcommit 2b4e4469abf7829360ffe986a678dc9eba658f51[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Tue Jul 30 11:01:46 2024 +0300
+
+    Update InputDoc.vue
+
+[33mcommit fa0e82c015db1cd5795e5ca5dc783b1b54c98617[m
+Merge: 93dee17 d6b96b7
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 10:44:02 2024 +0300
+
+    Merge branch 'master' of https://github.com/primefaces/sakai-vue
+
+[33mcommit 93dee17880c9ba712c555469621d83d0125b45bb[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 10:43:57 2024 +0300
+
+    Update font
+
+[33mcommit d6b96b741aa905d92b7489f30926858c7ffc4f4b[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Tue Jul 30 09:42:09 2024 +0300
+
+    Responsive message doc
+
+[33mcommit d8beda271f932093fbd76054504b1c495f1b2436[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Tue Jul 30 09:34:11 2024 +0300
+
+    Typo
+
+[33mcommit 9b229a2554dd84ba5f6a4b2249cdefd899097432[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 09:14:09 2024 +0300
+
+    Moved menuitem to state
+
+[33mcommit d97b058bf8ed4e3ce3004c5208b68a0174cd2029[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 09:11:50 2024 +0300
+
+    Add docs
+
+[33mcommit fa23cdfda214d256f9cefe84eae6230c21b72508[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 00:45:53 2024 +0300
+
+    More contrast for light more, remove deprecated Landing
+
+[33mcommit 4711b6868cad6ae31296b5390f7c8b5e5ee1d965[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 00:31:51 2024 +0300
+
+    Add a floating configurator
+
+[33mcommit 72ef6a60b625ffadfef08458ae4d122f4a38596b[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Tue Jul 30 00:13:31 2024 +0300
+
+    Updated demo pages
+
+[33mcommit 20eedb4b2b208b17674ce46280de0d7046130031[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Mon Jul 29 18:35:38 2024 +0300
+
+    New responsive topbar
+
+[33mcommit d8bf9b3bde85f34ed00ee036dfecf1b70348e181[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Mon Jul 29 17:43:53 2024 +0300
+
+    Refactored topbar
+
+[33mcommit bbf6f86814d7f6395db8b58e55f765c3d92dfddf[m
+Merge: 7c7cc7c 3efe7ae
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Mon Jul 29 16:48:52 2024 +0300
+
+    Merge branch 'master' of https://github.com/primefaces/sakai-vue
+
+[33mcommit 7c7cc7ce70345d9cc34752a16ba2c6043c32bb3a[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Mon Jul 29 16:48:03 2024 +0300
+
+    Update dashboard
+
+[33mcommit 3efe7ae222ae36723890ce0b16e63a0ded009f8e[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Mon Jul 29 16:01:14 2024 +0300
+
+    Use readonly for layout composable
+
+[33mcommit 0e3130d2a675dec877b34c81773abec908637c16[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Mon Jul 29 13:18:55 2024 +0300
+
+    Refactor
+
+[33mcommit 2726aeb8a1cc0a516e7b1026ff63fec0b3b685e1[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Mon Jul 29 10:14:47 2024 +0300
+
+    Format fixes
+
+[33mcommit a60346c2da1f9cfe1744a6ab25cd4ad0af4359c6[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Fri Jul 26 17:05:04 2024 +0300
+
+    Service updates
+
+[33mcommit 34a4d4a98d90376b70a53b109bbb3b2b06344beb[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Fri Jul 26 16:07:48 2024 +0300
+
+    Use new Fluid component
+
+[33mcommit 8e983a455a74d8d59fc11ad965c8bc3f76101af8[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Fri Jul 26 15:58:52 2024 +0300
+
+    Demo fixes for v4
+
+[33mcommit cafcd0449e42f72c45c942563a7f7fb21dd04d99[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Thu Jul 25 17:37:08 2024 +0300
+
+    Migrated to new design tokens of v4
+
+[33mcommit a7bec8d7a5087af9c083245ee832ede6da8c37cb[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Thu Jul 25 16:41:34 2024 +0300
+
+    Update to PrimeVue v4
+
+[33mcommit ef6f80dfb19d629469e7ab6b9ac6865b7aa03a57[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Fri Mar 29 08:21:34 2024 +0300
+
+    Sakai services updates
+
+[33mcommit 1f5aeb1a214a866fd474dccba0f4c3af6e3cb49a[m
+Merge: b9cc8fb 38a0ad3
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Mon Mar 18 10:33:54 2024 +0300
+
+    Merge branch 'prod'
+
+[33mcommit 38a0ad350f4d6637487c9f355ad0b9588444c03d[m
+Author: Cagatay Civici <cagatay.civici@gmail.com>
+Date:   Mon Mar 18 10:33:41 2024 +0300
+
+    Add vercel config
+
+[33mcommit b9cc8fb3140bce2107328358e804f6e158119a22[m[33m ([m[1;33mtag: [m[1;33m3.10.0[m[33m)[m
+Author: tugcekucukoglu <tugcekucukoglu.860@gmail.com>
+Date:   Mon Mar 11 17:52:09 2024 +0300
+
+    Set new version
+
+[33mcommit 73d2b5667c46a5b982038ce9750df0f0
