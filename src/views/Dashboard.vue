@@ -168,11 +168,11 @@ const detallesTicket = ref({
 
 
     <!-- Información del usuario -->
-    <div class="flex justify-between items-center p-6 bg-gray-100 rounded-lg shadow-md mb-10">
-        <div class="flex flex-col">
-            <h4 class="font-bold text-3xl text-gray-800 tracking-wide">Juan de los Santos</h4>
-            <p class="text-sm text-gray-500 mt-1 italic">
-                Última Actualización: <span class="font-semibold text-gray-700">2024 / 05 / 19 7:55:33 PM</span>
+    <div class=" card flex justify-between items-center p-6 rounded-lg shadow-md mb-10">
+        <div class="flex flex-col ">
+            <h4 class="font-bold text-3xl  tracking-wide">Juan de los Santos</h4>
+            <p class="text-sm  mt-1 italic">
+                Última Actualización: <span class="font-semibold">2024 / 05 / 19 7:55:33 PM</span>
             </p>
         </div>
         <div class="flex space-x-2">
@@ -240,64 +240,64 @@ const detallesTicket = ref({
 
    
     <!-- Grilla de tarjetas de resumen -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- <div class=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 "> -->
     <!-- Tarjeta: Loterías -->
-    <div class="card bg-white rounded-lg shadow-md flex flex-col h-auto">
-        <div class="flex justify-between mb-4">
+    <!-- <div class="card  rounded-lg shadow-md flex flex-col ">
+        <div class="flex justify-between mb-2 ">
             <div>
-                <span class="block text-gray-500 font-medium mb-2">Loterías</span>
+                <span class="block  font-medium mb-2">Loterías</span>
                 <div class="flex gap-4">
                     <div class="text-center">
-                        <div class="text-xl font-semibold text-gray-800">2,200</div>
-                        <p class="text-sm text-gray-500">Premios</p>
+                        <div class="text-xl font-semibold ">2,200</div>
+                        <p class="text-sm ">Premios</p>
                     </div>
                     <div class="text-center">
-                        <div class="text-xl font-semibold text-gray-800">5,800</div>
-                        <p class="text-sm text-gray-500">Venta</p>
+                        <div class="text-xl font-semibold ">5,500</div>
+                        <p class="text-sm ">Venta</p>
                     </div>
                     <div class="text-center">
-                        <div class="text-xl font-semibold text-gray-800">0,000</div>
-                        <p class="text-sm text-gray-500">Comisión</p>
+                        <div class="text-xl font-semibold ">0,000</div>
+                        <p class="text-sm ">Comisión</p>
                     </div>
                     <div class="text-center">
-                        <div class="text-xl font-semibold text-gray-800">5,800</div>
-                        <p class="text-sm text-gray-500">Utilidad</p>
+                        <div class="text-xl font-semibold ">5,800</div>
+                        <p class="text-sm ">Utilidad</p>
                     </div>
                 </div>
             </div>
             <i class="pi pi-dollar text-orange-500 text-2xl"></i>
         </div>
-        <span class="text-green-500 font-medium">+52%</span> <span class="text-gray-400">desde la última semana</span>
-    </div>
+        <span class="text-green-500 font-medium">+52%</span> <span >desde la última semana</span>
+    </div> -->
 
     <!-- Tarjeta: Premios de hoy -->
-    <div class="card p-6 bg-white rounded-lg shadow-md flex flex-col h-auto">
+    <!-- <div class="card p-6  rounded-lg shadow-md flex flex-col h-auto">
         <div class="flex justify-between mb-4">
             <div>
-                <span class="block text-gray-500 font-medium mb-2">Premios de hoy</span>
-                <div class="text-xl font-semibold text-gray-800">0</div>
+                <span class="block  font-medium mb-2 ">Premios de hoy</span>
+                <div class="text-xl font-semibold ">0</div>
             </div>
             <i class="pi pi-users text-cyan-500 text-2xl"></i>
         </div>
         <div class="flex justify-between mb-2">
             <div class="text-center">
-                <span class="block text-gray-500 font-medium">Premios reclamados</span>
-                <div class="text-xl font-semibold text-gray-800">0</div>
+                <span class="block  font-medium">Premios reclamados</span>
+                <div class="text-xl font-semibold ">0</div>
             </div>
             <div class="text-center">
-                <span class="block text-gray-500 font-medium">Premios pendientes</span>
-                <div class="text-xl font-semibold text-gray-800">0</div>
+                <span class="block  font-medium">Premios pendientes</span>
+                <div class="text-xl font-semibold ">0</div>
             </div>
         </div>
         <hr class="mb-2 border-gray-200">
         <div class="text-right">
-            <span class="block text-gray-500 font-medium">Premios Total</span>
-            <div class="text-xl font-semibold text-gray-800">0</div>
+            <span class="block  font-medium">Premios Total</span>
+            <div class="text-xl font-semibold ">0</div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Tabla de resultados de loterías -->
-    <div class="card p-6 bg-white rounded-lg shadow-md flex flex-col h-auto">
+    <!-- <div class="card p-6  rounded-lg shadow-md flex flex-col h-auto">
         <div class="bg-green-500 text-white font-semibold p-3 rounded-t-lg">Resultados</div>
         <DataTable :value="lotteries" :rows="5" :paginator="true" responsiveLayout="scroll">
             <Column style="width: 20%" header="Lotería">
@@ -315,23 +315,122 @@ const detallesTicket = ref({
             </Column>
         </DataTable>
     </div>
-</div>
+</div> -->
 
+
+<div class="bg-surface-50 dark:bg-surface-950 px-6 py-8 md:px-12 lg:px-20">
+        <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                <div class="bg-surface-0 dark:bg-surface-900 shadow p-4 rounded-border">
+                    <div class="flex justify-between mb-4">
+                        <div>
+                            <span class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Loterias</span>
+                            
+                            <div class="flex gap-3 m-2">
+                    <div class="text-center">
+                        <div class="text-xl font-semibold ">2,200</div>
+                        <p class="text-sm ">Premios</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xl font-semibold ">5,500</div>
+                        <p class="text-sm ">Venta</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xl font-semibold ">0,000</div>
+                        <p class="text-sm ">Comisión</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xl font-semibold ">5,800</div>
+                        <p class="text-sm ">Utilidad</p>
+                    </div>
+                    </div>
+                        </div>
+                        <div class="flex items-center justify-center  rounded-border w-10 h-10">
+                            <i class="pi pi-dollar text-blue-500 dark:text-blue-200 !text-xl" />
+                        </div>
+                    </div>
+                    <span class="text-green-500 font-medium">24 new </span>
+                    <span class="text-surface-500 dark:text-surface-300">desde la última semana</span>
+                </div>
+            </div>
+        <div class="col-span-12 md:col-span-6 lg:col-span-3">
+                <div class="bg-surface-0 dark:bg-surface-900 shadow p-4 rounded-border">
+                    <div class="flex justify-between mb-4">
+                        <div>
+                            <span class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Premios de hoy</span>
+                            <div class="flex justify-between mb-4">
+            <div>
+                <div class="text-xl font-semibold ">0</div>
+            </div>
+        </div>
+      
+        <div class="flex justify-between mb-2">
+            <div class="text-center">
+                <span class="block  font-medium">Premios reclamados</span>
+                <div class="text-xl font-semibold ">0</div>
+            </div>
+            <div class="text-center">
+                <span class="block  font-medium">Premios pendientes</span>
+                <div class="text-xl font-semibold ">0</div>
+            </div>
+        </div>
+        <hr class="mb-2 border-gray-200">
+                        </div>
+                        <div class="flex items-center justify-center  rounded-border w-10 h-10">
+                            <i class="pi pi-gift text-orange-500 dark:text-orange-200 !text-xl" />
+                        </div>
+                    </div>
+                    <span class="text-green-500 font-medium">%52+ </span>
+                    <span class="text-surface-500 dark:text-surface-300">Premios Total</span>
+                </div>
+            </div>
+
+
+            <div class="col-span-12 md:col-span-6 lg:col-span-5">
+                <div class="bg-surface-0 dark:bg-surface-900 shadow p-4 rounded-border">
+                    <div class="flex justify-between mb-4">
+                        <div>
+                            <span class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Resultados</span>
+                        </div>
+                        <div class="w-10 h-10 flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/30 rounded-border">
+                            <i class="pi pi-inbox text-cyan-500 dark:text-cyan-200 !text-xl" />
+                        </div>
+                    </div>
+                    <DataTable :value="lotteries" :rows="5" :paginator="true" responsiveLayout="scroll">
+            <Column style="width: 20%" header="Lotería">
+                <template #body="slotProps">
+                    <img :src="`/demo/images/Lotery/${slotProps.data.image}`" alt="Lotería" width="50"
+                        class="rounded-full shadow-md" />
+                </template>
+            </Column>
+            <Column field="name" header="Nombre" :sortable="true"></Column>
+            <Column field="time" header="Hora" :sortable="true"></Column>
+            <Column field="winningNumbers" header="Números Ganadores">
+                <template #body="slotProps">
+                    <span class="text-green-600">{{ slotProps.data.winningNumbers.join(', ') }}</span>
+                </template>
+            </Column>
+        </DataTable>
+                </div>
+            </div>
+            
+        </div>
+    </div>
 
     <!-- Gráfico de ventas y notificaciones -->
     <div class="grid grid-cols-1 gap-8 mt-10">
         <!--  Grafico  Ganancias de ultimo mes -->
 
-        <div class="card p-6 bg-white rouded-lg shadow-md">
+        <div class="card p-6  rouded-lg shadow-md">
             <div class="bg-green-500 text-white font-semibold p-3 rounded-t-lg">
                 Ganancias del ultimo mes
             </div>
-            <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]" />
+            <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem] text-green-400" />
 
         </div>
 
         <!-- Gráfico de flujo de ingresos -->
-        <div class="card p-6 bg-white rounded-lg shadow-md">
+        <div class="card p-6  rounded-lg shadow-md">
             <div class="bg-green-500 text-white font-semibold p-3 rounded-t-lg">Flujo de ingresos</div>
             <Chart type="bar" :data="chartData2" :options="chartOptions2" class="h-80" />
         </div>
@@ -350,10 +449,10 @@ const detallesTicket = ref({
             </div>
 
             <!-- Contenido de la tarjeta con datos de terminales en formato de tabla -->
-            <div class="overflow-x-auto bg-white p-4 rounded-b-lg">
+            <div class="overflow-x-auto  p-4 rounded-b-lg">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="text-gray-600 border-b border-gray-300">
+                        <tr class="border-b border-gray-300">
                             <th class="py-2 px-4 font-medium">Usuario</th>
                             <th class="py-2 px-4 font-medium">Total Loterías</th>
                             <th class="py-2 px-4 font-medium">Premios Pagos</th>
@@ -366,7 +465,7 @@ const detallesTicket = ref({
                     <tbody>
                         <!-- Aquí podrías agregar filas de datos dinámicamente usando un v-for -->
                         <tr>
-                            <td colspan="7" class="py-4 px-4 text-end text-gray-500">
+                            <td colspan="7" class="py-4 px-4 text-end ">
                                 Actualmente no hay información que mostrar
                             </td>
                         </tr>

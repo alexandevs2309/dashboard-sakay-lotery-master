@@ -6,9 +6,9 @@
   
       <!-- Modules Table -->
       <div class="overflow-x-auto">
-        <table class="w-full ">
+        <table class="w-full  ">
           <thead>
-            <tr class="bg-gray-100">
+            <tr class=" border-b mb-4 ">
               <th class="p-2 text-left">Nombre</th>
               <th class="p-2 text-left">Estado</th>
               <th class="p-2 text-left">Acciones</th>

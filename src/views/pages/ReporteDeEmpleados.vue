@@ -41,7 +41,7 @@
     </div>
 
     <!-- Reporte de Ventas -->
-    <div class="bg-gray-50 p-4 rounded-lg shadow-md">
+    <div class=" card p-4 rounded-lg shadow-md">
       <!-- Título del reporte -->
       <h3 class="text-md font-semibold mb-2">
         Reportes de ventas de los empleados del <span class="text-blue-500 font-bold text-lg mx-1">{{ formattedStartDate }} </span> al <span class="text-blue-500 font-bold text-lg mx-1">{{ formattedEndtDate }} </span>
@@ -50,7 +50,7 @@
       <!-- Tabla de Reporte -->
       <table class="w-full border border-gray-300 rounded-lg">
         <thead>
-          <tr class="bg-gray-100 text-left">
+          <tr class=" text-left">
             <!-- Encabezados Generales -->
             <th class="p-2" colspan="2">Generales</th>
             <!-- Encabezados Operaciones -->
@@ -60,7 +60,7 @@
             <!-- Encabezado Saldos -->
             <th class="p-2">Saldos</th>
           </tr>
-          <tr class="bg-gray-200 text-left">
+          <tr class=" text-left">
             <th class="p-2">Banca</th>
             <th class="p-2">Nombre</th>
             <th class="p-2">Promedio Ventas Lot.</th>
@@ -86,7 +86,7 @@
             <td class="p-2">{{ item.total }}</td>
           </tr>
           <!-- Fila para Total General -->
-          <tr class="font-semibold bg-gray-100">
+          <tr class="font-semibold ">
             <td colspan="2" class="p-2">Total General</td>
             <td class="p-2">{{ total.promedioVentasLot }}</td>
             <td class="p-2">{{ total.ingresosLoterias }}</td>

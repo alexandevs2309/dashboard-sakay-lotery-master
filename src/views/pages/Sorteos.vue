@@ -6,7 +6,7 @@
 
 
 <template>
-  <div class="p-6 bg-gray-100 min-h-screen">
+  <div class="p-6  min-h-screen">
 
 
     <h1 class="text-xl font-bold mb-4">Listado de Resultados de los Sorteos</h1>
@@ -24,7 +24,7 @@
                 :rowsPerPageOptions="[5, 10, 25]"
                 currentPageReportTemplate="">
      
-    >
+    
       <template #header>
         <div class="flex justify-between items-center">
 

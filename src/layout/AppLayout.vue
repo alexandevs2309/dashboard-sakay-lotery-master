@@ -62,15 +62,15 @@ function isOutsideClicked(event) {
         <!-- <app-sidebar></app-sidebar> -->
         <div class="layout-main-container">
             <!-- Aviso de pago pendiente -->
-            <div class="border-l-4 border-yellow-400 bg-yellow-50 p-4 mb-6 rounded-md shadow-md">
+            <div class="card border-l-4 border-green-400  p-4 mb-6 rounded-md shadow-md">
                 <div class="flex items-center">
-                    <span class="h-5 w-5 text-yellow-400 pi pi-exclamation-triangle mr-3" aria-hidden="true"></span>
-                    <p class="text-lg text-yellow-700 flex-grow">
+                    <span class="h-5 w-5 text-orange-400 pi pi-exclamation-triangle mr-3" aria-hidden="true"></span>
+                    <p class="text-lg text-green-700 flex-grow">
                         Tiene pendiente el pago de su servicios con fecha de corte: <span class="font-semibold">23 / 12
                             /
                             2024</span>
                     </p>
-                    <a href="#" class="font-medium text-yellow-700 underline hover:text-yellow-600 ml-auto">Pagar</a>
+                    <a href="#" class="font-medium text-green-700 underline hover:text-yellow-600 ml-auto">Pagar</a>
                 </div>
             </div>
             <div class="layout-main">

@@ -7,9 +7,9 @@
       </div>
   
       <div class="overflow-x-auto">
-        <table class="min-w-full border">
+        <table class="min-w-full ">
           <thead>
-            <tr class="bg-gray-100 text-gray-700 text-sm uppercase">
+            <tr class="text-sm uppercase bg-gray-100 text-gray-700">
               <th class="p-3 border">Juego</th>
               <th class="p-3 border">Resultado</th>
               <th class="p-3 border">Monto</th>

@@ -11,14 +11,14 @@
       <!-- Dropdown for Presupuesto -->
       <div class="flex items-center mb-4">
         <label for="presupuesto" class="mr-2">Presupuesto:</label>
-        <Select :options="presupuestoOptions" v-model="selectedPresupuesto" placeholder="Seleccionar" class="w-full md:w-1/2" />
+        <Select :options="presupuestoOptions" v-model="selectedPresupuesto" placeholder="Seleccionar" option-label="label" class="w-full md:w-1/2" />
       </div>
   
       <!-- Game and Capital Table -->
       <div class="overflow-x-auto">
         <table class="w-full border border-gray-300 rounded-lg">
           <thead>
-            <tr class="bg-blue-500 text-white">
+            <tr class="bg-gray-100 text-gray-700">
               <th class="p-2 text-left">Juego</th>
               <th class="p-2 text-left">Capital</th>
             </tr>

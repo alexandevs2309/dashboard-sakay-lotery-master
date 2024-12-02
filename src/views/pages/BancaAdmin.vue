@@ -3,45 +3,45 @@
 
 
     <div class="card">
-        <div class="card p-6 bg-white rounded-lg shadow-md">
+        <div class="card p-6 rounded-lg shadow-md">
             <!-- Título de la sección -->
-            <h2 class="text-2xl font-semibold text-gray-700 mb-6">Administrar Datos de la Banca</h2>
+            <h2 class="text-2xl font-semibold  mb-6">Administrar Datos de la Banca</h2>
             <!-- Formulario -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <!-- Código banca -->
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Código banca:</label>
+                    <label class="block  font-medium mb-1">Código banca:</label>
                     <InputText v-model="bankCode" placeholder="816" class="w-full" />
                 </div>
                 <!-- Nombre ticket -->
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Nombre ticket (Este se imprimirá en el Ticket de
+                    <label class="block  font-medium mb-1">Nombre ticket (Este se imprimirá en el Ticket de
                         Jugada):</label>
                     <InputText v-model="ticketName" placeholder="Banca Juan" class="w-full" />
                 </div>
 
                 <!-- Nombre clave -->
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Nombre clave (Solo para identificar
+                    <label class="block  font-medium mb-1">Nombre clave (Solo para identificar
                         internamente):</label>
                     <InputText v-model="internalName" placeholder="banca_1_1033" class="w-full" />
                 </div>
 
                 <!-- Teléfono -->
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Teléfono:</label>
+                    <label class="block  font-medium mb-1">Teléfono:</label>
                     <InputText v-model="phone" placeholder="8095551234" class="w-full" />
                 </div>
 
                 <!-- Dirección -->
                 <div class="col-span-2">
-                    <label class="block text-gray-600 font-medium mb-1">Dirección:</label>
+                    <label class="block  font-medium mb-1">Dirección:</label>
                     <InputText v-model="address" placeholder="123 Coconut Drive" class="w-full" />
                 </div>
 
                 <!-- Utilizar presupuesto propio -->
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Utilizar presupuesto propio:</label>
+                    <label class="block  font-medium mb-1">Utilizar presupuesto propio:</label>
                     <Select v-model="useOwnBudget" :options="budgetOptions" option-label="label" class="w-full" />
                 </div>
             </div>
@@ -49,31 +49,31 @@
             <!-- Mensajes -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Mensaje creación jugada:</label>
+                    <label class="block font-medium mb-1">Mensaje creación jugada:</label>
                     <Textarea v-model="createMessage" rows="2" class="w-full"
                         placeholder="Ingrese el mensaje aquí..." />
                 </div>
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Mensaje creación jugada deportiva:</label>
+                    <label class="block font-medium mb-1">Mensaje creación jugada deportiva:</label>
                     <Textarea v-model="createSportMessage" rows="2" class="w-full"
                         placeholder="Ingrese el mensaje aquí..." />
                 </div>
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Mensaje cancelación jugada:</label>
+                    <label class="block font-medium mb-1">Mensaje cancelación jugada:</label>
                     <Textarea v-model="cancelMessage" rows="2" class="w-full"
                         placeholder="Ingrese el mensaje aquí..." />
                 </div>
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Mensaje cancelación jugada deportiva:</label>
+                    <label class="block font-medium mb-1">Mensaje cancelación jugada deportiva:</label>
                     <Textarea v-model="cancelSportMessage" rows="2" class="w-full"
                         placeholder="Ingrese el mensaje aquí..." />
                 </div>
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Mensaje jugada premiada:</label>
+                    <label class="block font-medium mb-1">Mensaje jugada premiada:</label>
                     <Textarea v-model="winMessage" rows="2" class="w-full" placeholder="Ingrese el mensaje aquí..." />
                 </div>
                 <div>
-                    <label class="block text-gray-600 font-medium mb-1">Mensaje jugada deportiva premiada:</label>
+                    <label class="block font-medium mb-1">Mensaje jugada deportiva premiada:</label>
                     <Textarea v-model="winSportMessage" rows="2" class="w-full"
                         placeholder="Ingrese el mensaje aquí..." />
                 </div>
@@ -81,7 +81,7 @@
 
             <!-- Tipo de Banca -->
             <div class="mb-6">
-                <label class="block text-gray-600 font-medium mb-1">Tipo de Banca:</label>
+                <label class="block font-medium mb-1">Tipo de Banca:</label>
                 <Select v-model="bankType" :options="bankTypeOptions" option-label="label" class="w-full" />
             </div>
 

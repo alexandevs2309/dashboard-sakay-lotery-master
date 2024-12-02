@@ -1,5 +1,5 @@
 <template>
-   <div class="p-6 bg-gray-100">
+   <div class="p-6 ">
     <!-- Botón para abrir el diálogo -->
     <div class="flex justify-start mb-4">
       <Button label="Manejar Efectivo" class="p-button-success" @click="visible = true" />
@@ -14,14 +14,14 @@
     >
       <!-- Título -->
       <template #header>
-        <h2 class="text-lg font-bold text-gray-800">Movimiento Efectivo</h2>
+        <h2 class="text-lg font-bold ">Movimiento Efectivo</h2>
       </template>
 
       <!-- Contenido -->
       <div class="flex flex-col gap-4 p-6">
         <!-- Opción -->
         <div class="flex flex-col gap-2">
-          <label for="opcion" class="font-semibold text-gray-600">Opción</label>
+          <label for="opcion" class="font-semibold ">Opción</label>
           <Dropdown
             id="opcion"
             :options="opciones"
@@ -33,7 +33,7 @@
 
         <!-- Monto -->
         <div class="flex flex-col gap-2">
-          <label for="monto" class="font-semibold text-gray-600">Monto</label>
+          <label for="monto" class="font-semibold ">Monto</label>
           <InputText
             id="monto"
             v-model="monto"
@@ -45,8 +45,8 @@
 
         <!-- Descripción -->
         <div class="flex flex-col gap-2">
-          <label for="descripcion" class="font-semibold text-gray-600">
-            Descripción <span class="text-sm text-gray-400">(¿A qué se debe este movimiento?)</span>
+          <label for="descripcion" class="font-semibold ">
+            Descripción <span class="text-sm ">( ¿ A qué se debe este movimiento ? )</span>
           </label>
           <textarea
             id="descripcion"
@@ -81,11 +81,11 @@
 
       <!-- Resumen -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div class="col-span-3 lg:col-span-3 text-white rounded-md mt-0 border border-solid border-teal-400">
-          <div class="col-span-3 lg:col-span-3 bg-blue-700 p-4 mb-0">
-            <h1 class="text-lg font-semibold text-white">Resumen</h1>
+        <div class="col-span-3 lg:col-span-3  rounded-md mt-0 border border-solid border-gray-400">
+          <div class="col-span-3 lg:col-span-3  bg-gray-700 p-4 mb-0">
+            <h1 class="text-lg font-semibold text-white ">Resumen</h1>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-6 gap-4 text-center text-gray-800">
+          <div class="grid grid-cols-2 md:grid-cols-6 gap-4 text-center ">
             <div>
               <h3 class="text-lg font-semibold">Loterías</h3>
               <p>51,430</p>
@@ -117,7 +117,7 @@
       <!-- Sección de Estado General -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <!-- Gráfico -->
-        <div class="text-white rounded-md p-4">
+        <div class=" card text-white rounded-md p-4">
           <h3 class="text-lg font-semibold mb-4 bg-blue-700 text-white rounded-md p-4">Estado General</h3>
           <Chart type="bar" :data="chartData" :options="chartOptions" />
         </div>
@@ -127,7 +127,7 @@
           <!-- Modal -->
           <Dialog v-model:visible="isDialogVisible" :modal="true" class="w-3/2" :closable="false">
             <template #header>
-              <div class="flex justify-between items-center bg-gray-200 p-4">
+              <div class="flex justify-between items-center  p-4">
                 <h2 class="text-lg font-semibold">Jugada {{ selectedTicket.codigo }}</h2>
             </div>
             <Message severity="error">Cancelada</Message> 
@@ -137,7 +137,7 @@
               <div class="p-4">
                 <!-- Tabla Detallada -->
                 <table class="w-full border-collapse border border-gray-300 mb-6">
-                  <thead class="bg-gray-200">
+                  <thead class="">
                     <tr>
                       <th class="border border-gray-300 p-2 text-left">Combinación</th>
                       <th class="border border-gray-300 p-2 text-left">Lotería</th>
@@ -174,7 +174,7 @@
           </Dialog>
   
           <!-- Tabla de Jugadas Loterías -->
-          <div class="bg-white rounded-md shadow-md p-4">
+          <div class="card rounded-md shadow-md p-4">
             <h3 class="text-lg font-semibold mb-4">Jugadas Loterías</h3>
             <DataTable :value="jugadasLoterias" class="w-full">
               <Column header="Código">
@@ -193,7 +193,7 @@
           </div>
   
           <!-- Tabla de Movimiento de Efectivo -->
-          <div class="bg-white rounded-md shadow-md p-4">
+          <div class="card rounded-md shadow-md p-4">
             <h3 class="text-lg font-semibold mb-4">Movimiento de Efectivo</h3>
             <DataTable :value="movimientosEfectivo" class="w-full">
               <Column field="descripcion" header="Descripción" />

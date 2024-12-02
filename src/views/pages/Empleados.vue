@@ -4,6 +4,7 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
+import Tag from 'primevue/tag';
 
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
@@ -115,8 +116,8 @@ const goToEmployeeAdmin = (employeeId) => {
 
 <template>
   <div class="p-4">
-    <div class="p-3 bg-blue-100 text-blue-700 rounded-lg mb-6 flex justify-between">
-      <span>Para poder agregar más usuarios debe actualizar su plan.</span>
+    <div class="p-3 card shadow-lg   rounded-lg mb-6 flex justify-between">
+      <span>Para poder agregar más usuarios debe actualizar su pPlan.</span>
       <Button label="Actualizar Plan" icon="pi pi-refresh" class="p-button-primary ml-2" @click="updatePlan" />
     </div>
 
@@ -125,9 +126,9 @@ const goToEmployeeAdmin = (employeeId) => {
       <Button label="Mostrar deshabilitados" icon="pi pi-eye-slash" class="p-button-danger" @click="showDisabled" />
     </div>
 
-    <div class="p-3 bg-green-100 text-green-700 rounded-lg mb-4">
+    <Tag severity="success" class=" p-5 rounded-lg mb-4">
       Total de empleados: {{ employees.length }}
-    </div>
+    </Tag>
 
     <DataTable :value="employees" class="shadow-lg" :paginator="true" :rows="10" :globalFilter="searchQuery" responsiveLayout="scroll">
   <template #header>

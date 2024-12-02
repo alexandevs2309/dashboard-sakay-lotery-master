@@ -1,19 +1,19 @@
 <template>
-    <div class="p-4 bg-gray-100">
+    <div class="p-4">
         <!-- Filtros -->
-        <div class="bg-white p-4 rounded-lg shadow mb-6">
+        <div class=" p-4 rounded-lg shadow mb-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-gray-700 font-medium mb-1">Fecha Inicial</label>
+                    <label class="block  font-medium mb-1">Fecha Inicial</label>
                     <DatePicker v-model="FechaInicial" showIcon fluid iconDisplay="input" inputId="icondisplay" placeholder="MM/DD/YYYY" />
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-medium mb-1">Fecha Final</label>
+                    <label class="block  font-medium mb-1">Fecha Final</label>
                     <DatePicker v-model="FechaFinal" showIcon fluid iconDisplay="input" inputId="icondisplay" placeholder="MM/DD/YYYY" />
 
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-medium mb-1">Jugada a mostrar</label>
+                    <label class="block  font-medium mb-1">Jugada a mostrar</label>
                     <Select :options="playOptions" option-label="label" placeholder="Todos" class="w-full" 
                     v-model="selectedPlayOption"
                     />
@@ -26,8 +26,8 @@
         </div>
 
         <!-- Tabla de Reporte -->
-        <div class="bg-white p-4 rounded-lg shadow">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4">Reportes de premios</h2>
+        <div class=" p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold  mb-4">Reportes de premios</h2>
             <DataTable :value="reports" class="w-full">
                 <Column field="banca" header="Banca" />
                 <Column field="empleado" header="Emplead@" />

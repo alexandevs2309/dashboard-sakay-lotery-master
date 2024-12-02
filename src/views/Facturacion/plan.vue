@@ -15,7 +15,7 @@
 
 
 
-  <div class="p-4 bg-white shadow rounded-lg">
+  <div class="p-4  shadow rounded-lg">
     <h2 class="text-2xl font-semibold mb-4">Historial de Facturas</h2>
     <div class="flex flex-wrap justify-end gap-4 my-6">
       <IconField>
@@ -23,7 +23,7 @@
         <InputText v-model="value1" placeholder="Buscar" />
       </IconField>
     </div>
-    <table class="min-w-full bg-white border">
+    <table class="min-w-full border">
       <thead>
         <tr class="border-b">
           <th class="py-2 px-4 text-left">Código</th>

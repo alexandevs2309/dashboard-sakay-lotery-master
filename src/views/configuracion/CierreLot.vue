@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4  bg-white">
+  <div class="p-4  card pt-5 m-5">
     <button class="bg-blue-500 text-white px-4 py-2 rounded">Actualizar</button>
     <div class="mt-4">
       <input 
@@ -9,7 +9,7 @@
         v-model.number="globalMinutos"
         @input="updateMinutos"
       />
-      <table class="min-w-full bg-white">
+      <table class="min-w-full ">
         <thead>
           <tr>
             <th class="py-2">Lotería</th>

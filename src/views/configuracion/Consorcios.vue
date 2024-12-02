@@ -12,11 +12,11 @@
       <!--  panel de datos -->
       <TabPanels>
         <TabPanel value="0">
-          <h2 class="text-2xl font-semibold text-gray-700 mb-6">Administrar Datos de la Banca</h2>
+          <h2 class="text-2xl font-semibold  mb-6">Administrar Datos de la Banca</h2>
 
           <div class="m-0">
 
-            <div class="p-6 bg-gray-100 min-h-screen">
+            <div class="p-6  min-h-screen">
               <h1 class="text-xl font-bold mb-6">Administrar Datos del Consorcio</h1>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Nombre del consorcio -->
@@ -65,7 +65,7 @@
 
         <!-- Panel de Montos -->
         <TabPanel value="1">
-          <h2 class="text-2xl font-semibold text-gray-700 mb-6">Montos Generales</h2>
+          <h2 class="text-2xl font-semibold t mb-6">Montos Generales</h2>
 
           <!-- Mensaje de advertencia -->
           <div class="p-4 bg-yellow-100 text-yellow-800 rounded-md shadow-sm mb-6">
@@ -75,8 +75,8 @@
           <!-- Formulario de Montos -->
           <div class="overflow-x-auto shadow-md rounded-lg">
             <form @submit.prevent="guardarCambios">
-              <table class="table-auto w-full bg-white border border-gray-200 rounded-lg">
-                <thead class="bg-gray-100 text-gray-600 text-left">
+              <table class="table-auto w-full card shadow-lg border border-gray-200 rounded-lg">
+                <thead class=" text-left">
                   <tr>
                     <th class="px-4 py-2">Juego</th>
                     <th class="px-4 py-2">Capital</th>
@@ -84,7 +84,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(monto, index) in montos" :key="index" class="border-t">
-                    <td class="px-4 py-2 text-gray-700 font-medium">{{ monto.juego }}</td>
+                    <td class="px-4 py-2 t font-medium">{{ monto.juego }}</td>
                     <td class="px-4 py-2">
                       <!-- Campo editable con placeholder -->
                       <InputText v-model="monto.capital"
@@ -104,7 +104,7 @@
 
         <!-- Panel de Presupuestos -->
         <TabPanel value="2">
-          <h2 class="text-2xl font-semibold text-gray-700 mb-6">Administrar Presupuestos</h2>
+          <h2 class="text-2xl font-semibold t mb-6">Administrar Presupuestos</h2>
 
           <TabView>
             <!-- Pestañas por lotería -->
@@ -112,8 +112,8 @@
               <!-- Tabla de presupuestos -->
               <div class="overflow-x-auto shadow-md rounded-lg">
                 <form @submit.prevent="guardarPresupuestos">
-                  <table class="table-auto w-full bg-white border border-gray-200 rounded-lg">
-                    <thead class="bg-gray-100 text-gray-600 text-left">
+                  <table class="table-auto w-full  border border-gray-200 rounded-lg">
+                    <thead class="  text-left">
                       <tr>
                         <th class="px-4 py-2">Juego</th>
                         <th class="px-4 py-2">Horario</th>
@@ -123,7 +123,7 @@
                     </thead>
                     <tbody>
                       <tr v-for="(presupuesto, index) in presupuestos" :key="index" class="border-t">
-                        <td class="px-4 py-2 text-gray-700 font-medium">
+                        <td class="px-4 py-2 t font-medium">
                           {{ presupuesto.juego }}
                         </td>
                         <td class="px-4 py-2">
@@ -154,15 +154,15 @@
 
   <TabPanel value="3">
           <div class="card">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-6">Administrar Premios</h2>
+            <h2 class="text-2xl font-semibold t mb-6">Administrar Premios</h2>
             <TabView>
               <!-- Crear pestañas dinámicamente para las loterías -->
               <TabPanel v-for="(loteria, index) in loterias" :key="index" :header="loteria">
                 <!-- Tabla de premios -->
                 <div class="overflow-x-auto shadow-md rounded-lg">
                   <form @submit.prevent="actualizarPremios">
-                    <table class="table-auto w-full bg-white border border-gray-200 rounded-lg">
-                      <thead class="bg-gray-100 text-gray-600 text-left">
+                    <table class="table-auto w-full  border border-gray-200 rounded-lg">
+                      <thead class="  text-left">
                         <tr>
                           <th class="px-4 py-2">Lotería</th>
                           <th class="px-4 py-2">Juego</th>
@@ -194,7 +194,7 @@
         </TabPanel>
 
    <TabPanel value="4">
-        <h2 class="text-2xl font-semibold text-gray-700 mb-6">Administrar Mínimos de Apuestas</h2>
+        <h2 class="text-2xl font-semibold t mb-6">Administrar Mínimos de Apuestas</h2>
 
         <!-- Tabla para mínimos -->
         <div class="overflow-x-auto shadow-md rounded-lg">

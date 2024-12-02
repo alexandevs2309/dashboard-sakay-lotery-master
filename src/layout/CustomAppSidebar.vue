@@ -1,12 +1,12 @@
-<template>
-  <div class="layout-sidebar">
-      <ul class="custom-layout-menu">
+ <template>
+  <div class="layout-sidebar sidebar-custom" :class="{'dark-theme': isDarkTheme}">
+      <ul class="layout-menu">
           <li v-for="item in menuItems" :key="item.label" class="menu-item-container">
               <router-link :to="item.routerLink" class="menu-item" @click="toggleSubMenu(item)">
                   <i :class="item.iconClass"></i>
                   <span>{{ item.label }}</span>
               </router-link>
-              <ul v-if="item.hasSubmenu && item.submenuVisible" :class="['submenu', 'floating-submenu']">
+              <ul v-if="item.hasSubmenu && item.submenuVisible" :class="['submenu card', 'floating-submenu '] ">
                   <li v-for="subItem in item.submenuItems" :key="subItem.label">
                       <router-link :to="subItem.routerLink" class="submenu-item"
                       @click="closeSubMenu"
@@ -19,7 +19,7 @@
           </li>
       </ul>
   </div>
-</template>
+</template> 
 
 <script setup>
 
@@ -71,6 +71,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
   },
   { label: 'Facturación', iconClass: 'pi pi-dollar', routerLink: '/facturacion' },
 ]);
+const isDarkTheme = ref(false);
 
 const toggleSubMenu = (item) => {
 
@@ -108,9 +109,7 @@ onBeforeUnmount(() => {
 <style scoped>
 /* Estilos para la barra lateral y el menú */
 
-.layout-sidebar {
-  background-color: #fff;
-  color: #888;
+.sidebar-custom {
   height: 100vh;
   width: 100px;
   z-index: 997;
@@ -168,7 +167,7 @@ onBeforeUnmount(() => {
     top: 0;
     left: 55%;
     margin-left: 1px;
-    background-color: white;
+    background-color: rgb(248, 243, 243);
     padding: 0.5rem;
     border-radius: 5px;
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.15);
@@ -185,6 +184,7 @@ onBeforeUnmount(() => {
     margin-top: 0.5rem; 
     margin-left: 0.5rem;
     margin-bottom: 0.5rem;
+    color: #888;
 }
 
 
@@ -198,6 +198,13 @@ onBeforeUnmount(() => {
 }
 
 
+.dark-theme .submenu { background-color: #333333; color: #ffffff; }
+
+</style> 
 
 
-</style>
+
+
+
+
+

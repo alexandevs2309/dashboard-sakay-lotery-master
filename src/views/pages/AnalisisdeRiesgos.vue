@@ -81,7 +81,7 @@
         <!-- Tabla de resultados -->
         <table class="w-full border border-gray-300 rounded-lg">
           <thead>
-            <tr class="bg-gray-100">
+            <tr class="">
               <th class="p-2 text-left">Jugada</th>
               <th class="p-2 text-left">Lotería</th>
               <th class="p-2 text-left">Monto</th>

@@ -11,7 +11,7 @@
               <!-- Quiniela -->
               <TabPanel value="0">
                   <div class="card m-0">
-                      <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                      <div class=" p-6 rounded-lg shadow-md">
                           <h2 class="text-2xl font-bold mb-4">Restringir Quiniela</h2>
                           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="col-span-1 ml-10">
@@ -47,7 +47,7 @@
               <!-- Pale -->
               <TabPanel value="1">
                 <div class="card p-4 sm:p-6">
-                  <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                  <div class=" p-6 rounded-lg shadow-md">
                           <h2 class="text-2xl font-bold mb-4">Restringir Pale</h2>
                           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="col-span-1 ml-2">
@@ -87,7 +87,7 @@
               <!-- Super Pale -->
               <TabPanel value="2">
                 <div class="card p-4 sm:p-6">
-                  <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                  <div class=" p-6 rounded-lg shadow-md">
                           <h2 class="text-2xl font-bold mb-4">Restringir Super Pale</h2>
                           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="col-span-1">
@@ -127,7 +127,7 @@
               <!-- Tripleta -->
               <TabPanel value="3">
                 <div class="card p-4 sm:p-6">
-                  <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                  <div class=" p-6 rounded-lg shadow-md">
                           <h2 class="text-2xl font-bold mb-4">Restringir Tripleta</h2>
                           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="col-span-1">
@@ -174,7 +174,6 @@
 
 <script>
 import Button from 'primevue/button';
-import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import { defineComponent, ref } from 'vue';
