@@ -1,55 +1,53 @@
+import axios from "axios";
+
+const API_URL = 'http://127.0.0.1:8000/api/bancas/';
+
 export const BancaService = {
-    getBancasData() {
-        return [
-            {
-                id: '3000',
-                code: 'banca001',
-                name: 'Banca Centro',
-                location: 'Santo Domingo',
-                status: 'ACTIVA',
-                employees: 5,
-                dailyRevenue: 15000,
-                monthlyRevenue: 450000,
-                ticketsSold: 1200,
-                rating: 4.7
-            },
-            {
-                id: '3001',
-                code: 'banca002',
-                name: 'Banca del Este',
-                location: 'La Romana',
-                status: 'ACTIVA',
-                employees: 3,
-                dailyRevenue: 10000,
-                monthlyRevenue: 300000,
-                ticketsSold: 900,
-                rating: 4.5
-            },
-            {
-                id: '3002',
-                code: 'banca003',
-                name: 'Banca Sur',
-                location: 'San Cristóbal',
-                status: 'INACTIVA',
-                employees: 0,
-                dailyRevenue: 0,
-                monthlyRevenue: 0,
-                ticketsSold: 0,
-                rating: 3.8
-            },
-            {
-                id: '3003',
-                code: 'banca004',
-                name: 'Banca Norte',
-                location: 'Santiago',
-                status: 'ACTIVA',
-                employees: 4,
-                dailyRevenue: 13000,
-                monthlyRevenue: 390000,
-                ticketsSold: 1100,
-                rating: 4.6
-            }
-        ];
+    async getBancasData() {
+        try {
+            const response = await axios.get(API_URL);
+            console.log("Bancas recibidas del backend:", response.data);
+            // Imprime los IDs para verificar
+            response.data.forEach(banca => {
+                console.log(`Banca ID: ${banca.id}, Nombre: ${banca.nombre}`);
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error al obtener las bancas:', error);
+            throw error;
+        }
+    
+    },
+
+    async createBanca(bancaData) {
+        try {
+            const response = await axios.post(API_URL, bancaData);
+            return response.data;
+        } catch (error) {
+            console.error('Error al crear la banca:', error);
+            throw error;
+        }
+    },
+
+    async getBancaById(id) {
+        try {
+            console.log("Intentando obtener banca con ID:", id);
+            
+            const url = `${API_URL}${id}/`;
+            console.log("URL completa:", url);
+    
+            const response = await axios.get(url);
+            console.log("Respuesta del servidor:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Detalles completos del error:', {
+                message: error.message,
+                status: error.response?.status,
+                data: error.response?.data,
+                url: error.config?.url
+            });
+            throw error;
+        }
     },
 
     getBancasWithDetails() {
@@ -90,70 +88,5 @@ export const BancaService = {
             }
         ];
     },
-
-    getBancaById(id) {
-        const banca = this.getBancasData().find(banca => banca.id === id);
-        return banca
-            ? Promise.resolve(banca)
-            : Promise.reject(new Error(`No se encontró la banca con ID ${id}`));
-    },
-
-    getBancaByCode(code) {
-        const banca = this.getBancasData().find(banca => banca.code === code);
-        return banca
-            ? Promise.resolve(banca)
-            : Promise.reject(new Error(`No se encontró la banca con código ${code}`));
-    },
-
-
-    getLotteryResults() {
-        return [
-            {
-                id: '1', image: 'lottery1.png',
-                name: 'Lotería Nacional',
-                drawTime: '10:00 AM',
-                winningNumbers: [12, 34, 56, 78, 90]
-            },
-            {
-                id: '2',
-                image: 'lottery2.png',
-                name: 'Lotería del Este',
-                drawTime: '12:00 PM',
-                winningNumbers: [22, 44, 66, 88, '00']
-            },
-            {
-                id: '3',
-                image: 'lottery3.png',
-                name: 'Lotería del Sur',
-                drawTime: '02:00 PM',
-                winningNumbers: [11, 33, 55, 77, 99]
-            }
-        ];
-    },
-
-
-    getLotteryResultsWithDetails() {
-        return Promise.resolve(this.getLotteryResults());
-    },
-
-
-
-
-    getBancasMini() {
-        return Promise.resolve(this.getBancasData().slice(0, 2));
-    },
-
-    getBancas() {
-        return Promise.resolve(this.getBancasData());
-    },
-
-    getBancasWithDetailsSmall() {
-        return Promise.resolve(this.getBancasWithDetails().slice(0, 1));
-    },
-
-    getBancasWithDetails() {
-        return Promise.resolve(this.getBancasWithDetails());
-    }
-
-
+    // El resto de tus métodos permanecen igual
 };

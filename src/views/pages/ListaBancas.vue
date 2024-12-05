@@ -6,12 +6,16 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 onMounted(() => {
-    BancaService.getBancas().then((data) => (bancas.value = data));
+    BancaService.getBancasData().then((data) => { 
+        console.log(data); // Verifica la estructura de los datos
+
+        bancas.value = data
+    })
 });
 
 const toast = useToast();
 const dt = ref();
-const bancas = ref();
+const bancas = ref([]);
 const bancaDialog = ref(false);
 const deleteBancaDialog = ref(false);
 const deleteBancasDialog = ref(false);
@@ -120,8 +124,9 @@ function deleteSelectedBancas() {
 const router = useRouter();
 
 const redirectToBancaAdmin = (banca) => {
-    console.log("Navegando a banca:", banca.id);
-    // Usa el name de la ruta en lugar de la URL directa
+    console.log("Banca completa:", banca);
+    console.log("ID de banca para navegación:", banca.id);
+    
     router.push({
         name: 'bancaAdmin',
         params: { id: banca.id }
@@ -158,26 +163,26 @@ function getStatusLabel(status) {
                     </div>
                 </template>
 
-                <Column field="code" header="Code" sortable style="min-width: 12rem"></Column>
-                <Column field="name" header="Name" sortable style="min-width: 16rem">
+                <Column field="codigo" header="Codigo" sortable style="min-width: 12rem"></Column>
+                <Column field="nombre" header="Nombre" sortable style="min-width: 16rem">
                     <template #body="slotProps">
                         <span @click="redirectToBancaAdmin(slotProps.data)" class="text-blue-500 cursor-pointer">
-                            {{ slotProps.data.name }}
+                            {{ slotProps.data.nombre }}
                         </span>
                     </template>
                 </Column>
-                <Column field="location" header="Location" sortable style="min-width: 12rem"></Column>
-                <Column field="dailyRevenue" header="Daily Revenue" sortable style="min-width: 10rem">
+                <Column field="direcccion" header="Direcccion:" sortable style="min-width: 12rem"></Column>
+                <Column field="telefono" header="Telefono:" sortable style="min-width: 10rem">
                     <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.dailyRevenue) }}
+                        {{ formatCurrency(slotProps.data.telefono) }}
                     </template>
                 </Column>
-                <Column field="monthlyRevenue" header="Monthly Revenue" sortable style="min-width: 10rem">
+                <Column field="tipo_de_bancas" header="Tipo Bancas:" sortable style="min-width: 10rem">
                     <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.monthlyRevenue) }}
+                        {{ formatCurrency(slotProps.data.tipo_de_bancas) }}
                     </template>
                 </Column>
-                <Column field="status" header="Status" sortable style="min-width: 12rem">
+                <Column field="status" header="Status:" sortable style="min-width: 12rem">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                     </template>

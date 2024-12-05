@@ -110,10 +110,18 @@ const banca = ref(null);
 
 const activeTab = ref(0); 
 
-onMounted(() => {
-    const bancaId = route.params.id;
-    BancaService.getBancaById(bancaId)
-        .then(bancaData => banca.value = bancaData);
+onMounted(async () => {
+    console.log("ID de ruta recibido:", route.params.id);
+
+    try {
+                const bancaId = route.params.id;
+                const bancaData = await BancaService.getBancaById(bancaId);
+                console.log("Datos de banca obtenidos:", bancaData);
+                banca.value = bancaData;
+            } catch (error) {
+                console.error("Error al obtener los detalles de la banca:", error);
+            }
+            return{ banca}
 
         activeTab.value = 0;
 });
