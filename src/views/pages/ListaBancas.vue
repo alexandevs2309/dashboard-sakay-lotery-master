@@ -31,9 +31,10 @@ const statuses = ref([
 ]);
 
 function formatCurrency(value) {
-    if (value) return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-    return;
+    if (typeof value !== 'number') return value;
+    return value.toLocaleString('es-DO', { style: 'currency', currency: 'DOP' });
 }
+
 
 function openNew() {
     banca.value = {};
@@ -50,26 +51,57 @@ function saveBanca() {
     submitted.value = true;
 
     if (banca?.value.name?.trim()) {
-        if (banca.value.id) {
-            banca.value.status = banca.value.status.value ? banca.value.status.value : banca.value.status;
-            bancas.value[findIndexById(banca.value.id)] = banca.value;
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Banca Updated', life: 3000 });
-        } else {
-            banca.value.id = createId();
-            banca.value.code = createId();
-            bancas.value.push(banca.value);
-            toast.add({ severity: 'success', summary: 'Successful', detail: 'Banca Created', life: 3000 });
-        }
+        try {
+            // Preparar los datos para enviar al backend
+            const bancaToSave = { 
+                ...banca.value,
+                status: banca.value.status.value || banca.value.status
+            };
 
-        bancaDialog.value = false;
-        banca.value = {};
+            // Llamar al servicio para actualizar la banca
+            BancaService.updateBanca(bancaToSave.id, bancaToSave)
+                .then(updatedBanca => {
+                    // Actualizar localmente el estado de la banca
+                    const index = findIndexById(updatedBanca.id);
+                    if (index !== -1) {
+                        bancas.value[index] = updatedBanca;
+                    }
+
+                    // Mostrar mensaje de éxito
+                    toast.add({ 
+                        severity: updatedBanca.status === 'INACTIVA' ? 'warn' : 'success', 
+                        summary: 'Successful', 
+                        detail: updatedBanca.status === 'INACTIVA' 
+                            ? 'Banca Desactivada' 
+                            : 'Banca Actualizada', 
+                        life: 3000 
+                    });
+
+                    bancaDialog.value = false;
+                    banca.value = {};
+                })
+                .catch(error => {
+                    // Manejar errores de la actualización
+                    toast.add({ 
+                        severity: 'error', 
+                        summary: 'Error', 
+                        detail: 'No se pudo actualizar la banca', 
+                        life: 3000 
+                    });
+                });
+        } catch (error) {
+            console.error('Error preparando datos de banca:', error);
+            toast.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'Ocurrió un error al preparar la actualización', 
+                life: 3000 
+            });
+        }
     }
 }
 
-function editBanca(b) {
-    banca.value = { ...b };
-    bancaDialog.value = true;
-}
+
 
 function confirmDeleteBanca(b) {
     banca.value = b;
@@ -77,11 +109,33 @@ function confirmDeleteBanca(b) {
 }
 
 function deleteBanca() {
-    bancas.value = bancas.value.filter((val) => val.id !== banca.value.id);
-    deleteBancaDialog.value = false;
-    banca.value = {};
-    toast.add({ severity: 'success', summary: 'Successful', detail: 'Banca Deleted', life: 3000 });
+    BancaService.deleteBanca(banca.value.id)
+        .then(() => {
+            // Elimina la banca localmente del estado
+            bancas.value = bancas.value.filter((val) => val.id !== banca.value.id);
+            deleteBancaDialog.value = false;
+            banca.value = {};
+
+            // Muestra un mensaje de éxito
+            toast.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Banca Eliminada',
+                life: 3000
+            });
+        })
+        .catch((error) => {
+            // Maneja el error en caso de que no se pueda eliminar la banca
+            console.error("Error al eliminar la banca:", error);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No se pudo eliminar la banca. Inténtalo nuevamente.',
+                life: 3000
+            });
+        });
 }
+
 
 function findIndexById(id) {
     let index = -1;
@@ -111,6 +165,7 @@ function exportCSV() {
 function confirmDeleteSelected() {
     deleteBancasDialog.value = true;
 }
+
 
 function deleteSelectedBancas() {
     bancas.value = bancas.value.filter((val) => !selectedBancas.value.includes(val));
@@ -145,6 +200,7 @@ function getStatusLabel(status) {
             return null;
     }
 }
+
 </script>
 
 <template>
@@ -155,6 +211,7 @@ function getStatusLabel(status) {
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 :rowsPerPageOptions="[5, 10, 25]"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} bancas">
+              
                 <!-- Barra de búsqueda -->
                 <template #header>
                     <div class="flex flex-wrap gap-2 items-center justify-between">
@@ -163,25 +220,25 @@ function getStatusLabel(status) {
                     </div>
                 </template>
 
-                <Column field="codigo" header="Codigo" sortable style="min-width: 12rem"></Column>
-                <Column field="nombre" header="Nombre" sortable style="min-width: 16rem">
+                <Column field="codigo" header="Codigo" sortable style="min-width: 10rem"></Column>
+                <Column field="nombre" header="Nombre" sortable style="min-width: 10rem">
                     <template #body="slotProps">
                         <span @click="redirectToBancaAdmin(slotProps.data)" class="text-blue-500 cursor-pointer">
                             {{ slotProps.data.nombre }}
                         </span>
                     </template>
                 </Column>
-                <Column field="direcccion" header="Direcccion:" sortable style="min-width: 12rem"></Column>
-                <Column field="telefono" header="Telefono:" sortable style="min-width: 10rem">
-                    <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.telefono) }}
-                    </template>
+                <Column field="direcccion" header="Direcccion:" sortable style="min-width: 10rem"></Column>
+                            <Column field="ganancias_dia" header="Ganancias Días" sortable style="min-width: 11rem">
+                <template #body="slotProps">
+                    {{ formatCurrency(slotProps.data.daily_revenue) }}
+                </template>
                 </Column>
-                <Column field="tipo_de_bancas" header="Tipo Bancas:" sortable style="min-width: 10rem">
-                    <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.tipo_de_bancas) }}
-                    </template>
-                </Column>
+                    <Column field="ganancias_mes" header="Ganancias Mes" sortable style="min-width: 11rem">
+                        <template #body="slotProps">
+                            {{ formatCurrency(slotProps.data.monthly_revenue) }}
+                        </template>
+                    </Column>
                 <Column field="status" header="Status:" sortable style="min-width: 12rem">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />

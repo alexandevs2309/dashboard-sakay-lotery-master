@@ -7,6 +7,15 @@ import AdminPresupuestos from '../pages/AdminPresupuestos.vue';
 import BancaAdmin from '../pages/BancaAdmin.vue';
 import MontosGenrales from '../pages/MontosGenrales.vue';
 
+
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
+import TabPanel from 'primevue/tabpanel';
+
+
+
 // Definir el estado inicial
 const activeTab = ref('datos');
 
@@ -23,7 +32,7 @@ watch(activeTab, (newValue) => {
     
 <template>
     <div class="card">
-        <Tabs v-model="activeTab" defaultValue="1">
+        <Tabs v-model="activeTab" value="0">
             <TabList>
                 <Tab value="0">Datos</Tab>
                 <Tab value="1">Montos</Tab>

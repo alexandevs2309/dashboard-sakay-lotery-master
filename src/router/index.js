@@ -4,6 +4,12 @@ import AdministrarEmpleados from '@/views/pages/AdministrarEmpleados.vue';
 import Reportes from '@/views/pages/Reportes.vue';
 import Sorteos from '@/views/pages/Sorteos.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import Cookies from 'js-cookie';
+
+
+
+
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -245,6 +251,34 @@ const router = createRouter({
 
 
     ]
+
+    
 });
 
-export default router;
+
+
+router.beforeEach((to, from, next) => {
+    const publicPages = ['/auth/login', '/landin', '/auth/access'];
+    const authRequired = !publicPages.some(page => to.path.startsWith(page));
+  
+    let user = null;
+    try {
+      // Obtener el usuario de la cookie
+      const userFromCookie = Cookies.get('user'); 
+      if (userFromCookie) {
+        user = JSON.parse(userFromCookie); 
+      }
+    } catch (error) {
+      console.error('Error parsing user from cookie:', error);
+      Cookies.remove('user'); // Eliminar la cookie si hay un error al analizarla
+    }
+  
+    if (authRequired && !user) {
+      console.log('Redirigiendo a login', { to: to.path, user });
+      return next('/auth/login');
+    }
+  
+    next();
+  });
+  
+  export default router;
