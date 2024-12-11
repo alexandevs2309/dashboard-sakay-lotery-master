@@ -7,9 +7,12 @@ export function login(email, password) {
     .then(response => {
       console.log('Respuesta del login:', response.data);
 
-      if (response.data && response.data.access && response.data.user && typeof response.data.user === 'object') {
-        // Guardar el token en una cookie con HttpOnly
-        Cookies.set('token', response.data.access, { expires: 7, httpOnly: true });
+      if (response.data && response.data.access && response.data.refresh && response.data.user && typeof response.data.user === 'object') {
+        // Guardar el token de acceso
+        Cookies.set('token', response.data.access, { expires: 1 });
+        
+        // Guardar el refresh token
+        Cookies.set('refresh_token', response.data.refresh, { expires: 7 });
 
         // Guardar usuario en una cookie 
         Cookies.set('user', JSON.stringify(response.data.user), { expires: 7 }); 
@@ -25,4 +28,14 @@ export function login(email, password) {
       console.error('Error durante el login:', error);
       throw error; // Re-lanzar el error para que el componente pueda manejarlo
     });
+}
+
+export function logout() {
+  // Limpiar todas las cookies relacionadas con la autenticación
+  Cookies.remove('token');
+  Cookies.remove('refresh_token');
+  Cookies.remove('user');
+  
+  // Redirigir al login
+  router.push('/login');
 }

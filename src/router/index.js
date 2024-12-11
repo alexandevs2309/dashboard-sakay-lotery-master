@@ -249,6 +249,10 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         },
 
+        {
+            path: '/profile' , name: 'profile', component: () => import('@/views/pages/auth/Profile.vue')
+        },
+
 
     ]
 

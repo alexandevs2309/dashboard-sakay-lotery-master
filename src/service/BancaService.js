@@ -45,7 +45,7 @@ export const BancaService = {
             const url = `${API_URL}${id}/`;
             console.log("URL completa:", url);
     
-            const response = await axios.get(url , {});
+            const response = await axios.get(url ,  { headers: getAuthHeaders() });
             console.log("Respuesta del servidor:", response.data);
             return response.data;
         } catch (error) {
@@ -87,14 +87,19 @@ export const BancaService = {
 
     async toggleBanca(id) {
         try {
-            const response = await axios.patch(`${API_URL}${id}/toggle/`);
+            const response = await axios.patch(`${API_URL}${id}/toggle/`, null, { headers: getAuthHeaders() });
             console.log('Estado de la banca actualizado:', response.data);
             return response.data;
         } catch (error) {
-            console.error('Error al actualizar el estado de la banca:', error);
+            console.error('Error completo al actualizar el estado de la banca:', {
+                message: error.message,
+                status: error.response?.status,
+                data: error.response?.data,
+                headers: error.config?.headers
+            });
             throw error;
         }
-      },
+    },
 
     
       

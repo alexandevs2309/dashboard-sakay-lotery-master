@@ -186,7 +186,7 @@ const toggleBanca = async (id) => {
 
     console.log('Alternando estado de la banca...');
     try {
-        const response = await BancaService.toggleBanca(id); // Llamamos al servicio para alternar el estado
+        const response = await BancaService.toggleBanca(banca.value.id);
 
         // Actualizamos el estado reactivo en Vue
         if (response.status === 'ACTIVA') {

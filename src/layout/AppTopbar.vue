@@ -4,6 +4,38 @@ import Button from 'primevue/button';
 import AppConfigurator from './AppConfigurator.vue';
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
+
+import { ref } from 'vue';
+import Menu from 'primevue/menu';
+import { logout } from '@/service/AuthService';
+const profileMenu = ref(null);
+const toggleProfileMenu = (event) => {
+    profileMenu.value.toggle(event);
+};
+const menuItems = [
+    {
+        label: 'Perfil',
+        icon: 'pi pi-user',
+        command: () => {
+            window.location.href = '/profile';
+        }
+    },
+    {
+        label: 'Configuración',
+        icon: 'pi pi-cog',
+        command: () => {
+            window.location.href = '/settings';
+        }
+    },
+    {
+        label: 'Logout',
+        icon: 'pi pi-sign-out',
+        command: () => {
+            logout();
+            window.location.href = '/login';
+        }
+    }
+];
 </script>
 
 <template>
@@ -61,11 +93,7 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 
             <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
-                  
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-user"></i>
-                        <span>Profile</span>
-                    </button>
+                    <Button class="layout-topbar-action" @click="toggleProfileMenu"> <i class="pi pi-user"></i> <span>Profile</span> </Button> <Menu :model="menuItems" popup ref="profileMenu" />
                 </div>
             </div>
         </div>
