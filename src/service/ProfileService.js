@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = 'http://127.0.0.1:8000/api/profile/';  // El endpoint para obtener y actualizar el perfil del usuario
+const API_URL = 'http://127.0.0.1:8000/api/profile/';
 
 function getAuthHeaders() {
     const token = Cookies.get('token');
@@ -26,7 +26,15 @@ export const ProfileService = {
     // Actualizar el perfil del usuario
     async updateProfile(profileData) {
         try {
-            const response = await axios.put(API_URL, profileData, { headers: getAuthHeaders() });
+
+
+            const headers = {
+                ...getAuthHeaders(), // Incluir las cabeceras de autenticación
+                'Content-Type': profileData instanceof FormData ? 'multipart/form-data' : 'application/json'
+            };
+
+            const response = await axios.put(API_URL, profileData, { headers });
+            
             return response.data;
         } catch (error) {
             console.error('Error al actualizar el perfil:', error);

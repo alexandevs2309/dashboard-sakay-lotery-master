@@ -1,3 +1,4 @@
+import { logout } from '@/service/AuthService';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -52,9 +53,7 @@ apiClient.interceptors.response.use(
                     data: refreshError.response?.data
                 });
                 
-                Cookies.remove('token');
-                Cookies.remove('refresh_token');
-                window.location.href = '/login';
+               logout()
             }
         }
         

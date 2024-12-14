@@ -1,342 +1,333 @@
-<template>
-    <div class="profile-container bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-6">
-      <div class="w-full max-w-full">
-        <div class="bg-white shadow-2xl rounded-3xl overflow-hidden">
-          <!-- Profile Header -->
-          <div class="relative">
-            <!-- Background Cover -->
-            <div class="h-48  bg-gradient-to-r from-blue-500 to-purple-600 relative">
-              <!-- Overlay with Subtle Pattern -->
-              <div class="absolute inset-0 opacity-20 bg-pattern"></div>
-              
-              <!-- Profile Picture -->
-              <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
-                <div class="border-6 border-white rounded-full shadow-xl">
-                  <Avatar 
-                    :image="user.profilePicture || defaultAvatar" 
-                    size="xlarge" 
-                    shape="circle" 
-                    class="w-36 h-36 object-cover border-4 border-white"
-                    @click="openImageCropModal"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-  
-          <!-- User Details -->
-          <div class="pt-24 px-8 text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-2">{{ user.first_name}} {{ user.last_name }} </h2>
-            <p class="text-lg text-gray-600 mb-4">{{ user.role }}</p>
-            
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-3 gap-4 mb-6 bg-gray-50 rounded-2xl p-4 shadow-md">
-              <div class="text-center">
-                <h3 class="text-sm uppercase text-gray-500 mb-1">Banca</h3>
-                <p class="font-bold text-blue-600">{{ user.assignedBanca || 'No asignada' }}</p>
-              </div>
-              <div class="text-center">
-                <h3 class="text-sm uppercase text-gray-500 mb-1">Nivel de Acceso</h3>
-                <p class="font-bold text-purple-600">{{ user.accessLevel || 'No Asignado' }}</p>
-              </div>
-              <div class="text-center">
-                <h3 class="text-sm uppercase text-gray-500 mb-1">Correo</h3>
-                <p class="font-bold text-green-600">{{ user.email }}</p>
-              </div>
-            </div>
-  
-            <!-- Action Buttons -->
-            <div class="flex justify-center space-x-4 mb-8">
-              <Button 
-                label="Editar Perfil" 
-                icon="pi pi-pencil"
-                class="p-button-raised p-button-rounded p-button-primary"
-                @click="openEditProfileDialog"
-              />
-              <Button 
-                label="Cambiar Contraseña" 
-                icon="pi pi-lock"
-                class="p-button-raised p-button-rounded p-button-warning"
-                @click="openChangePasswordDialog"
-              />
-              <Button 
-                label="Configuraciones" 
-                icon="pi pi-cog"
-                class="p-button-raised p-button-rounded p-button-info"
-                @click="openPreferencesDialog"
-              />
-            </div>
+<script>
+import { ref, onMounted, computed } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import apiClient from '@/api/axios'
+import Cookies from 'js-cookie';
+import { ProfileService } from '@/service/ProfileService';
+import Button from 'primevue/button';
+import Checkbox from 'primevue/checkbox';
+import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
+import InputText from 'primevue/inputtext';
+import InputMask from 'primevue/inputmask';
+import Password from 'primevue/password';
+import router from '@/router';
 
-            <!-- Profile Sections Tabs -->
-            <TabView>
-              <TabPanel header="Información">
-                <div class="p-4">
-                  <h3 class="text-xl font-semibold mb-4">Biografía</h3>
-                  <p class="text-gray-700">{{ user.biography || 'No hay biografía disponible' }}</p>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mt-6">
-                  <div>
-                    <h3 class="text-lg font-semibold mb-3">Habilidades</h3>
-                    <div class="flex flex-wrap gap-2">
-                      <Tag v-for="skill in user.skills" :key="skill" :value="skill" class="mr-2 mb-2" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="text-lg font-semibold mb-3">Logros</h3>
-                    <div class="flex flex-wrap gap-2">
-                      <Badge v-for="badge in user.badges" :key="badge.id" :value="badge.name" :severity="badge.type" class="mr-2 mb-2" />
-                    </div>
-                  </div>
-                </div>
-              </TabPanel>
-              <TabPanel header="Actividad">
-                <div class="p-4">
-                  <h3 class="text-xl font-semibold mb-4">Historial de Actividad</h3>
-                  <Timeline :value="user.activityLog" align="alternate">
-                    <template #content="slotProps">
-                      <Card>
-                        <template #title>{{ slotProps.item.title }}</template>
-                        <template #subtitle>{{ slotProps.item.date }}</template>
-                        <template #content>
-                          <p>{{ slotProps.item.description }}</p>
-                        </template>
-                      </Card>
-                    </template>
-                  </Timeline>
-                </div>
-              </TabPanel>
-              <TabPanel header="Contacto">
-                <div class="p-4">
-                  <h3 class="text-xl font-semibold mb-4">Información de Contacto</h3>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700">Teléfono</label>
-                      <p class="mt-1">{{ user.phone || 'No disponible' }}</p>
-                    </div>
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700">LinkedIn</label>
-                      <a :href="user.linkedinProfile" target="_blank" class="text-blue-600 hover:underline">
-                        {{ user.linkedinProfile || 'No configurado' }}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </TabPanel>
-            </TabView>
-          </div>
+export default {
+  components: {
+    Button,
+    Checkbox,
+    InputText,
+    InputMask,
+    Password,
+    InputText,
+    FloatingConfigurator
+  },
+  setup() {
+    const toast = useToast();
+    
+
+    const user = ref({
+      first_name: '',
+      last_name: '',
+      email: '',
+    });
+
+    const passwords = ref({
+      current: '',
+      new: '',
+      confirm: '',
+    });
+
+    const security = ref({
+      twoFactor: false,
+    });
+
+    const profilePicture = ref(null);
+    
+    const NewProfilePicture = ref(null);
+
+    // Computed property to handle profile picture display
+    const displayProfilePicture = computed(() => {
+      return profilePicture.value || '/public/demo/images/user.png';
+    });
+
+    const validatePasswords = () => {
+      if (passwords.value.new !== passwords.value.confirm) {
+        throw new Error('Las contraseñas nuevas no coinciden');
+      }
+      
+      if (passwords.value.new && passwords.value.new.length < 8) {
+        throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
+      }
+    };
+
+    const handleProfilePictureUpload = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        // Validate file type and size
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        const maxSize = 5 * 1024 * 1024; // 5 MB
+
+        if (!allowedTypes.includes(file.type)) {
+          toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Solo se permiten archivos JPG, PNG y GIF.',
+          });
+          return;
+        }
+
+        if (file.size > maxSize) {
+          toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'El archivo es demasiado grande. Máximo 5 MB.',
+          });
+          return;
+        }
+
+        // Create a FileReader to preview the image
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          profilePicture.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // Store the file for upload
+        NewProfilePicture.value = file;
+      }
+    };
+
+    const fetchUserData = async () => {
+      try {
+        const response = await apiClient.get('/profile/');
+        if (response.status === 200) {
+          const data = response.data;
+          
+          user.value.first_name = data.first_name || '';
+          user.value.last_name = data.last_name || '';
+          user.value.email = data.email || '';
+          
+          // Actualizar imagen de perfil
+          profilePicture.value = data.profile_picture || null;
+          
+          security.value.twoFactor = data.two_factor || false;
+
+          // Actualizar cookie con los datos más recientes
+          Cookies.set('user', JSON.stringify({
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email,
+            profile_picture: data.profile_picture
+          }), { expires: 7 }); 
+        }
+      } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+        
+        // Intentar recuperar datos de la cookie si falla el backend
+        const userCookie = Cookies.get('user');
+        if (userCookie) {
+          try {
+            const userData = JSON.parse(userCookie);
+            user.value.first_name = userData.first_name || '';
+            user.value.last_name = userData.last_name || '';
+            user.value.email = userData.email || '';
+            profilePicture.value = userData.profile_picture || null;
+          } catch (parseError) {
+            console.error('Error al parsear los datos del usuario desde la cookie:', parseError);
+          }
+        }
+      }
+    };
+
+    const saveChanges = async () => {
+      try {
+        // Validar contraseñas si se están cambiando
+        if (passwords.value.new || passwords.value.confirm) {
+          validatePasswords();
+        }
+
+        const formData = new FormData();
+        formData.append('first_name', user.value.first_name);
+        formData.append('email', user.value.email);
+        formData.append('two_factor', security.value.twoFactor);
+
+        // Agregar cambio de contraseña si se proporcionó
+        if (passwords.value.current && passwords.value.new) {
+          formData.append('current_password', passwords.value.current);
+          formData.append('new_password', passwords.value.new);
+        }
+
+        // Agregar imagen de perfil si se seleccionó
+        if (NewProfilePicture.value) {
+          formData.append('profile_picture', NewProfilePicture.value);
+          console.log(profilePicture.value)
+        }
+
+        const response = await ProfileService.updateProfile(formData);
+
+        if (response && response.status === 'Perfil actualizado') {
+          // Limpiar campos de contraseña después de actualizar
+          passwords.value.current = '';
+          passwords.value.new = '';
+          passwords.value.confirm = '';
+          profilePicture.value = response.data.profile_picture; 
+
+          // Volver a cargar los datos para asegurar consistencia
+          await fetchUserData();
+
+          toast.add({
+            severity: 'success',
+            summary: 'Perfil Actualizado',
+            detail: 'Los cambios se han guardado exitosamente.',
+          });
+        } else {
+          throw new Error('No se pudo actualizar el perfil');
+        }
+      } catch (error) {
+        console.error("Error completo:", error);
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.message || 'Error al guardar los cambios.',
+        });
+      }
+    };
+
+    // Cargar datos al montar el componente
+    onMounted(fetchUserData);
+
+    return {
+      user,
+      passwords,
+      security,
+      displayProfilePicture,
+      handleProfilePictureUpload,
+      saveChanges,
+    };
+  },
+};
+</script>`
+
+`<template>
+  <FloatingConfigurator />
+  
+  <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
+    <div class="profile-component max-w-4xl mx-auto p-6 bg-surface-50 dark:bg-surface-900 shadow-lg rounded-lg space-y-8">
+    <!-- Header -->
+    <div class="text-center">
+      <h2 class="text-3xl font-bold text-surface-700 dark:text-surface-0 mb-2">{{ user.first_name }} {{ user.last_name }}</h2>
+      <p class="text-surface-500 dark:text-surface-400">Administra tu información personal y configuración de seguridad</p>
+    </div>
+
+    <!-- Profile Picture Section -->
+    <div class="text-center">
+      <div class="inline-block relative">
+        <img 
+          :src="displayProfilePicture" 
+          alt="Foto de perfil" 
+          class="w-28 h-28 rounded-full border-4 border-surface-200 dark:border-surface-700 object-cover" 
+        />
+        <label 
+          for="upload" 
+          class="absolute bottom-0 right-0 bg-primary-500 text-white p-2 rounded-full cursor-pointer hover:bg-primary-600"
+        >
+          <i class="pi pi-camera"></i>
+          <input 
+            id="upload" 
+            type="file" 
+            @change="handleProfilePictureUpload" 
+            class="hidden" 
+            accept="image/jpeg,image/png,image/gif" 
+          />
+        </label>
+      </div>
+      <p class="mt-2 text-sm text-surface-600 dark:text-surface-400">Haz clic en el icono para cambiar la foto</p>
+    </div>
+
+    <!-- Personal Information Section -->
+    <div class="bg-white dark:bg-surface-800 p-6 rounded-md shadow-md">
+      <h3 class="text-lg font-semibold text-surface-700 dark:text-surface-0 mb-4">Información Personal</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-medium text-surface-600 dark:text-surface-300 mb-2">Nombre</label>
+          <InputText 
+            v-model="user.first_name" 
+            type="text" 
+            size="large" 
+            placeholder="Tu nombre completo" 
+          />
         </div>
-  
-        <!-- Existing Dialogs (Edit Profile, Change Password) from previous version -->
-        <!-- ... (previous dialogs remain the same) ... -->
-
-        <!-- Preferences Dialog -->
-        <Dialog 
-          v-model:visible="preferencesDialogVisible" 
-          header="Configuraciones" 
-          :style="{ width: '600px' }"
-          :modal="true"
-          class="custom-dialog"
-        >
-          <template #header>
-            <div class="flex items-center">
-              <i class="pi pi-cog mr-3 text-2xl text-blue-600"></i>
-              <h3 class="text-xl font-semibold text-gray-800">Preferencias</h3>
-            </div>
-          </template>
-          <div class="p-fluid">
-            <!-- Theme Preferences -->
-            <div class="field mb-5">
-              <label class="block text-gray-700 mb-2 font-semibold">Tema de la Aplicación</label>
-              <div class="flex space-x-4">
-                <div 
-                  v-for="theme in themes" 
-                  :key="theme.value"
-                  @click="selectTheme(theme.value)"
-                  class="cursor-pointer p-2 rounded-lg flex items-center"
-                  :class="{
-                    'border-2 border-blue-500': preferences.theme === theme.value,
-                    'hover:bg-gray-100': preferences.theme !== theme.value
-                  }"
-                >
-                  <div 
-                    class="w-8 h-8 rounded-full mr-2" 
-                    :style="{ backgroundColor: theme.color }"
-                  ></div>
-                  <span>{{ theme.label }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Language Preferences -->
-            <div class="field mb-5">
-              <label class="block text-gray-700 mb-2 font-semibold">Idioma</label>
-              <Dropdown 
-                v-model="preferences.language" 
-                :options="languages"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Selecciona un idioma"
-                class="w-full"
-              />
-            </div>
-
-            <!-- Notification Preferences -->
-            <div class="field mb-5">
-              <label class="block text-gray-700 mb-2 font-semibold">Configuración de Notificaciones</label>
-              <div class="flex flex-col space-y-3">
-                <div class="flex items-center">
-                  <Checkbox 
-                    v-model="preferences.notifications.email" 
-                    :binary="true"
-                    class="mr-2"
-                  />
-                  <label>Notificaciones por Correo Electrónico</label>
-                </div>
-                <div class="flex items-center">
-                  <Checkbox 
-                    v-model="preferences.notifications.push" 
-                    :binary="true"
-                    class="mr-2"
-                  />
-                  <label>Notificaciones Push</label>
-                </div>
-                <div class="flex items-center">
-                  <Checkbox 
-                    v-model="preferences.notifications.sms" 
-                    :binary="true"
-                    class="mr-2"
-                  />
-                  <label>Notificaciones SMS</label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Two-Factor Authentication -->
-            <div class="field mt-6">
-              <label class="block text-gray-700 mb-2 font-semibold">Seguridad</label>
-              <div class="flex items-center justify-between">
-                <span>Autenticación de Dos Factores</span>
-                <InputSwitch v-model="preferences.twoFactorAuth" />
-              </div>
-              <small class="text-gray-500">Protege tu cuenta con una capa adicional de seguridad</small>
-            </div>
-
-            <!-- Save Preferences Button -->
-            <div class="field mt-6">
-              <Button 
-                label="Guardar Configuraciones" 
-                icon="pi pi-check"
-                class="w-full p-button-lg p-button-rounded p-button-success"
-                @click="savePreferences"
-              />
-            </div>
-          </div>
-        </Dialog>
-
-        <!-- Two-Factor Authentication Modal -->
-        <Dialog 
-          v-model:visible="twoFactorSetupVisible" 
-          header="Configurar Autenticación de Dos Factores" 
-          :style="{ width: '500px' }"
-          :modal="true"
-        >
-          <div class="p-fluid">
-            <div v-if="!twoFactorEnabled" class="text-center">
-              <img :src="twoFactorQRCode" alt="QR Code" class="mx-auto mb-4"/>
-              <p class="mb-4">Escanea este código QR con tu aplicación de autenticación</p>
-              <InputText 
-                v-model="twoFactorCode"
-                placeholder="Introduce el código de verificación"
-                class="w-full mb-4"
-              />
-              <Button 
-                label="Verificar y Activar" 
-                @click="verifyTwoFactor"
-                class="w-full p-button-success"
-              />
-            </div>
-            <div v-else class="text-center">
-              <i class="pi pi-check-circle text-6xl text-green-500 mb-4"></i>
-              <h3 class="text-xl mb-4">Autenticación de Dos Factores Activada</h3>
-              <Button 
-                label="Desactivar" 
-                @click="disableTwoFactor"
-                class="w-full p-button-danger"
-              />
-            </div>
-          </div>
-        </Dialog>
+        <div>
+          <label class="block font-medium text-surface-600 dark:text-surface-300 mb-2">Correo Electrónico</label>
+          <InputText 
+            v-model="user.email" 
+            type="email" 
+            size="large"
+            placeholder="Tu correo electrónico" 
+          />
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-import { ref, onMounted } from 'vue'
-import { useToast } from 'primevue/usetoast'
-import { ProfileService } from '@/service/ProfileService'
 
-// PrimeVue Imports
-import Avatar from 'primevue/avatar'
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog'
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
-import Tag from 'primevue/tag'
-import Badge from 'primevue/badge'
-import Timeline from 'primevue/timeline'
-import Card from 'primevue/card'
-import Dropdown from 'primevue/dropdown'
-import Checkbox from 'primevue/checkbox'
-import InputSwitch from 'primevue/inputswitch'
+    <!-- Password Section -->
+    <div class="bg-white dark:bg-surface-800 p-6 rounded-md shadow-md">
+      <h3 class="text-lg font-semibold text-surface-700 dark:text-surface-0 mb-4">Cambiar Contraseña</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block font-medium text-surface-600 dark:text-surface-300 mb-2">Contraseña Actual</label>
+          <Password 
+            v-model="passwords.current" 
+            type="password" 
+            toggleMask
+            size="large"
+            placeholder="Ingresa tu contraseña actual" 
+          />
+        </div>
+        <div>
+          <label class="block font-medium text-surface-600 dark:text-surface-300 mb-2">Nueva Contraseña</label>
+          <Password v-model="passwords.new"  type="password" size="large" placeholder="Ingresa una nueva contraseña" toggleMask
+          />
+        </div>
+        <div>
+          <label class="block font-medium text-surface-600 dark:text-surface-300 mb-2">Confirmar Nueva Contraseña</label>
+          <Password v-model="passwords.confirm" type="password" size="large" placeholder="Confirma tu nueva contraseña" toggleMask />
 
-// Default avatar (replace with your actual default avatar path)
-const defaultAvatar = '/public/demo/images/user.png'
+       
+        </div>
+      </div>
+    </div>
 
-// Toast notification
-const toast = useToast()
+    <!-- Security Options -->
+    <div class="bg-white dark:bg-surface-800 p-6 rounded-md shadow-md">
+      <h3 class="text-lg font-semibold text-surface-700 dark:text-surface-0 mb-4">Opciones de Seguridad</h3>
+      <div class="flex items-center space-x-4">
+        <Checkbox 
+          v-model="security.twoFactor" 
+          inputId="two-factor" 
+          :binary="true" 
+          class="dark:border-surface-600" 
+        />
+        <label 
+          for="two-factor" 
+          class="text-surface-700 dark:text-surface-300"
+        >
+          Autenticación de Dos Factores
+        </label>
+      </div>
+    </div>
 
-// User data (it will be populated after the API call)
-const user = ref({
-  fullName: '',
-  email: '',
-  role: '',
-  profilePicture: '',
-  assignedBanca: '',
-  accessLevel: '',
-  biography: '',
-  skills: [],
-  badges: [],
-  phone: '',
-  linkedinProfile: '',
-  activityLog: []
-})
+    <!-- Save Button -->
+    <div class="text-center">
+      <Button 
+        @click="saveChanges" 
+        type="submit" 
+        class="bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500"
+      >
+        Guardar Cambios
+      </Button>
+    </div>
+    </div>
+  </div>
+</template>
 
-// Fetch user profile on mounted
-onMounted(async () => {
-  try {
-    const response = await ProfileService.getProfile()  
-    console.log(response); // Verificar la respuesta de la API
-
-    user.value = response  // Asignar los datos obtenidos a la variable user
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo obtener el perfil' })
-  }
-})
-
-// Preferences Management
-const preferencesDialogVisible = ref(false)
-const preferences = ref({
-theme: 'light',
-language: 'es',
-notifications: {
-email: true,
-push: false,
-sms: false
-  },
-  twoFactorAuth: false
-})
-
-// Other code for preferences and two-factor setup remains the same
-</script>

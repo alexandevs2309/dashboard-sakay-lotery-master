@@ -1,12 +1,17 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
-
-
 import { useAuthStore } from '@/stores/auth';
-import {apiClient} from '@/api/axios';
 import { useRouter } from 'vue-router';
+
 import { login } from '@/service/AuthService';
+
+import InputText from 'primevue/inputtext'; 
+import Checkbox from 'primevue/checkbox'; 
+import Button from 'primevue/button'; 
+import Message from 'primevue/message';
+import Toast from 'primevue/toast';
+
 
 const email = ref('');
 const password = ref('');
@@ -14,6 +19,7 @@ const checked = ref(false);
 const error = ref(null);
 const loading = ref(false);
 const router = useRouter();
+
 const authStore = useAuthStore()
 
 
@@ -25,6 +31,26 @@ const handleLogin = async () => {
     return;
   }
 
+  if (!checked.value) {
+    error.value = 'Debes aceptar los términos y condiciones.';
+    return;
+  }
+
+  if(password.value.length < 8){
+    error.value = 'La contraseña debe tener al menos 8 caracteres.';
+    return;
+  }
+
+  if(!email.value.includes('@')){
+    error.value = 'El correo electrónico no es válido.';
+    return;
+  }
+
+  if(!email.value.includes('.')){
+    error.value = 'El correo electrónico no es válido.';
+    return;
+  }
+
   loading.value = true; // Mostrar el indicador de carga
   error.value = null;
 
@@ -33,6 +59,7 @@ const handleLogin = async () => {
 
     // Verifica la respuesta del login
     if (response && response.data && response.data.access) {
+      authStore.setToken(response.data.access)
       // Redirige al usuario
       router.push('/'); 
     } else {
@@ -41,7 +68,11 @@ const handleLogin = async () => {
     }
   } catch (error) {
     // Maneja el error del login
-    error.value = error.response?.data?.detail || 'Error al iniciar sesión.'; 
+    if(error.response &&  error.response.status === 500 ){
+      error.value = 'Credenciales incorrectas. , email o contracena incorrecta';
+    }else{
+      error.value = error.response?.data?.detail || 'Error al iniciar sesión.';
+    }
   } finally {
     loading.value = false; // Ocultar el indicador de carga
   }
@@ -49,42 +80,11 @@ const handleLogin = async () => {
 
   
 
-
-// const handleLogin = async()=>{
-//     if (!email.value || !password.value) {
-//         error.value = 'Por favor, completa todos los campos.';
-//         return;
-//     }
-//     error.value = null;
-//     try {
-//         loading.value = true;
-//         const response = await apiClient.post('/token', {
-//             email: email.value,
-//             password: password.value,
-//         });
-//         console.log(response.data);
-//         authStore.setToken(response.data.token);
-//         authStore.setUser(response.data.user);
-//         localStorage.setItem('access_token', response.data.token); // opcional ALMACENAR en localStorage
-//         router.push('/');
-//     } catch (err) {
-//     if (err.response) {
-//         error.value = err.response.data.message || 'Credenciales inválidas, intenta nuevamente.';
-//     } else {
-//         error.value = 'Ocurrió un error inesperado. Por favor, intenta de nuevo.';
-//     }
-// }
-
-//     return { email, password, handleLogin, error };
-
-// }
-
-
-
-
 </script>
 
 <template>
+
+  
     <FloatingConfigurator />
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center">
@@ -109,15 +109,16 @@ const handleLogin = async () => {
                             </g>
                         </svg>
                         <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to LoteryHub!</div>
+                        
                         <span class="text-muted-color font-medium">Sign in to continue</span>
                     </div>
 
                     <form @submit.prevent="handleLogin" >
                         <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                        <InputText id="email1" type="email" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="email" required/>
+                        <InputText id="email1" v-model="email" type="email" placeholder="Email address" class="w-full md:w-[30rem]" />
 
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                        <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false" required></Password>
+                        <InputText id="password1" v-model="password" type="password" placeholder="Password" class="w-full md:w-[30rem]" />
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
                             <div class="flex items-center">
@@ -126,10 +127,11 @@ const handleLogin = async () => {
                             </div>
                             <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div>
-                        <Button type="submit" label="Sign In" class="w-full" :loading="loading"></Button>
+                        <Button type="submit" label="Sign In" class="w-full mt-4" :loading="loading"></Button>
+                        <Message v-if="error && !error.includes('email') && !error.includes('password')" class="p-error text-center">{{ error }}</Message> 
                     </form>
-                    <p v-if="error" class="p-error text-center">{{ error }}</p>
-                </div>
+
+                  </div>
             </div>
         </div>
     </div>

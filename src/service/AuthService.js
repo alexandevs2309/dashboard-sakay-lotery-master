@@ -32,6 +32,7 @@ export function login(email, password) {
 
 export function logout() {
   // Limpiar todas las cookies relacionadas con la autenticación
+  console.log("Ejecutando logout..."); // Agrega esta línea
   Cookies.remove('token');
   Cookies.remove('refresh_token');
   Cookies.remove('user');
