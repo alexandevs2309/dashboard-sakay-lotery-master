@@ -25,7 +25,7 @@ export default {
   setup() {
     const toast = useToast();
     
-
+    const isLoading = ref(true);
     const user = ref({
       first_name: '',
       last_name: '',
@@ -42,15 +42,10 @@ export default {
       twoFactor: false,
     });
 
-    const profilePicture = ref(null);
     
-    const NewProfilePicture = ref(null);
 
     // Computed property to handle profile picture display
-    const displayProfilePicture = computed(() => {
-      return profilePicture.value || '/public/demo/images/user.png';
-    });
-
+   
     const validatePasswords = () => {
       if (passwords.value.new !== passwords.value.confirm) {
         throw new Error('Las contraseñas nuevas no coinciden');
@@ -61,55 +56,20 @@ export default {
       }
     };
 
-    const handleProfilePictureUpload = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        // Validate file type and size
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        const maxSize = 5 * 1024 * 1024; // 5 MB
-
-        if (!allowedTypes.includes(file.type)) {
-          toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Solo se permiten archivos JPG, PNG y GIF.',
-          });
-          return;
-        }
-
-        if (file.size > maxSize) {
-          toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'El archivo es demasiado grande. Máximo 5 MB.',
-          });
-          return;
-        }
-
-        // Create a FileReader to preview the image
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          profilePicture.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-
-        // Store the file for upload
-        NewProfilePicture.value = file;
-      }
-    };
+   
 
     const fetchUserData = async () => {
       try {
         const response = await apiClient.get('/profile/');
+        console.log('Respuesta completa:', response);
+    console.log('Datos recibidos:', response.data);
+    console.log('Propiedades en los datos:', Object.keys(response.data));
         if (response.status === 200) {
           const data = response.data;
           
           user.value.first_name = data.first_name || '';
           user.value.last_name = data.last_name || '';
           user.value.email = data.email || '';
-          
-          // Actualizar imagen de perfil
-          profilePicture.value = data.profile_picture || null;
           
           security.value.twoFactor = data.two_factor || false;
 
@@ -118,7 +78,6 @@ export default {
             first_name: data.first_name,
             last_name: data.last_name,
             email: data.email,
-            profile_picture: data.profile_picture
           }), { expires: 7 }); 
         }
       } catch (error) {
@@ -132,7 +91,7 @@ export default {
             user.value.first_name = userData.first_name || '';
             user.value.last_name = userData.last_name || '';
             user.value.email = userData.email || '';
-            profilePicture.value = userData.profile_picture || null;
+            profilePicture.value = userData.profilePicture || null;
           } catch (parseError) {
             console.error('Error al parsear los datos del usuario desde la cookie:', parseError);
           }
@@ -142,6 +101,7 @@ export default {
 
     const saveChanges = async () => {
       try {
+        
         // Validar contraseñas si se están cambiando
         if (passwords.value.new || passwords.value.confirm) {
           validatePasswords();
@@ -158,11 +118,7 @@ export default {
           formData.append('new_password', passwords.value.new);
         }
 
-        // Agregar imagen de perfil si se seleccionó
-        if (NewProfilePicture.value) {
-          formData.append('profile_picture', NewProfilePicture.value);
-          console.log(profilePicture.value)
-        }
+       
 
         const response = await ProfileService.updateProfile(formData);
 
@@ -171,7 +127,6 @@ export default {
           passwords.value.current = '';
           passwords.value.new = '';
           passwords.value.confirm = '';
-          profilePicture.value = response.data.profile_picture; 
 
           // Volver a cargar los datos para asegurar consistencia
           await fetchUserData();
@@ -201,16 +156,13 @@ export default {
       user,
       passwords,
       security,
-      displayProfilePicture,
-      handleProfilePictureUpload,
       saveChanges,
     };
   },
 };
-</script>`
+</script>
 
-`<template>
-  <FloatingConfigurator />
+<template>
   
   <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
     <div class="profile-component max-w-4xl mx-auto p-6 bg-surface-50 dark:bg-surface-900 shadow-lg rounded-lg space-y-8">
@@ -220,30 +172,7 @@ export default {
       <p class="text-surface-500 dark:text-surface-400">Administra tu información personal y configuración de seguridad</p>
     </div>
 
-    <!-- Profile Picture Section -->
-    <div class="text-center">
-      <div class="inline-block relative">
-        <img 
-          :src="displayProfilePicture" 
-          alt="Foto de perfil" 
-          class="w-28 h-28 rounded-full border-4 border-surface-200 dark:border-surface-700 object-cover" 
-        />
-        <label 
-          for="upload" 
-          class="absolute bottom-0 right-0 bg-primary-500 text-white p-2 rounded-full cursor-pointer hover:bg-primary-600"
-        >
-          <i class="pi pi-camera"></i>
-          <input 
-            id="upload" 
-            type="file" 
-            @change="handleProfilePictureUpload" 
-            class="hidden" 
-            accept="image/jpeg,image/png,image/gif" 
-          />
-        </label>
-      </div>
-      <p class="mt-2 text-sm text-surface-600 dark:text-surface-400">Haz clic en el icono para cambiar la foto</p>
-    </div>
+ 
 
     <!-- Personal Information Section -->
     <div class="bg-white dark:bg-surface-800 p-6 rounded-md shadow-md">

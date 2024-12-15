@@ -1,14 +1,28 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import Button from 'primevue/button';
+import Avatar from 'primevue/avatar';
 import AppConfigurator from './AppConfigurator.vue';
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Menu from 'primevue/menu';
 import { logout } from '@/service/AuthService';
+import { ProfileService } from '@/service/ProfileService';
+
 const profileMenu = ref(null);
+
+const userName = ref('Usuario'); // Valor inicial por defecto
+const userInitials = computed(() => {
+    if (!userName.value) return 'U'; // Si no hay nombre, usar una inicial por defecto
+    const names = userName.value.split(' ');
+    const initials = names.map((n) => n[0]?.toUpperCase()).join('');
+    return initials.slice(0, 2); // Máximo 2 iniciales
+});
+
+
+
 const toggleProfileMenu = (event) => {
     profileMenu.value.toggle(event);
 };
@@ -36,6 +50,24 @@ const menuItems = [
         }
     }
 ];
+
+onMounted(async () => {
+    try {
+        const response = await ProfileService.getProfile();
+        
+
+        if (response?.data) {
+            userName.value = response.data.name || 'Usuario'; // Establecer el nombre del usuario
+        } else {
+            console.warn('Datos del perfil no están disponibles.');
+        }
+    } catch (error) {
+        console.error('Error al obtener el perfil:', error);
+    }
+});
+
+
+
 </script>
 
 <template>
@@ -68,6 +100,11 @@ const menuItems = [
         </div>
 
         <div class="layout-topbar-actions">
+
+            
+           
+          
+
             <div class="layout-config-menu">
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
@@ -96,6 +133,10 @@ const menuItems = [
                     <Button class="layout-topbar-action" @click="toggleProfileMenu"> <i class="pi pi-user"></i> <span>Profile</span> </Button> <Menu :model="menuItems" popup ref="profileMenu" />
                 </div>
             </div>
+
+                <OverlayBadge value="4" severity="danger" class="inline-flex">
+                    <Avatar label="" class="mr-2" size="large" style="background-color: #ece9fc; color: #2a1261" >{{ userInitials }}</Avatar>
+                </OverlayBadge>
         </div>
     </div>
 </template>

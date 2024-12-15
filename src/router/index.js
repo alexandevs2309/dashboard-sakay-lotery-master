@@ -210,7 +210,7 @@ const router = createRouter({
 
                 {
                     path: '/facturacion',
-                    name: 'Facturacion', // Nombre exacto que usaste en el código
+                    name: 'Facturacion',
                     component: () => import('@/views/Facturacion/plan.vue')
                 },
 
@@ -219,7 +219,12 @@ const router = createRouter({
                     path: '/ajustes',
                     name: 'Ajustes',
                     component: () => import('@/views/pages/Ajustes.vue')
-                }
+                },
+                {
+                    path: '/profile' , 
+                    name: 'profile',
+                    component: () => import('@/views/pages/auth/Profile.vue')
+                },
             ]
         },
         {
@@ -249,9 +254,7 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Error.vue')
         },
 
-        {
-            path: '/profile' , name: 'profile', component: () => import('@/views/pages/auth/Profile.vue')
-        },
+      
 
 
     ]
@@ -262,7 +265,7 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
-    const publicPages = ['/auth/login', '/landin', '/auth/access'];
+    const publicPages = ['/auth/login', '/landing', '/auth/access'];
     const authRequired = !publicPages.some(page => to.path.startsWith(page));
   
     let user = null;
