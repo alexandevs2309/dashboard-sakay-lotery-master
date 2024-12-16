@@ -1,24 +1,34 @@
 <script setup>
-import { useLayout } from '@/layout/composables/layout';
-import Button from 'primevue/button';
+import { computed, onMounted, ref } from 'vue';
+
+import OverlayBadge from 'primevue/badge';
 import Avatar from 'primevue/avatar';
+import Button from 'primevue/button';
+import Menu from 'primevue/menu';
+
+import { ProfileService } from '@/service/ProfileService';
+import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
+import { logout } from '@/service/AuthService';
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 
-import { computed, onMounted, ref } from 'vue';
-import Menu from 'primevue/menu';
-import { logout } from '@/service/AuthService';
-import { ProfileService } from '@/service/ProfileService';
 
+const user = ref({
+    first_name: '',
+    last_name: '',
+    email: '',
+    role: '',
+    avatar: ''
+});
 const profileMenu = ref(null);
 
-const userName = ref('Usuario'); // Valor inicial por defecto
 const userInitials = computed(() => {
-    if (!userName.value) return 'U'; // Si no hay nombre, usar una inicial por defecto
-    const names = userName.value.split(' ');
-    const initials = names.map((n) => n[0]?.toUpperCase()).join('');
-    return initials.slice(0, 2); // Máximo 2 iniciales
+  if (user.value.first_name && user.value.last_name) {
+    return `${user.value.first_name[0].toUpperCase()}${user.value.last_name[0].toUpperCase()}`;
+  } else {
+    return 'U';
+  }
 });
 
 
@@ -51,13 +61,15 @@ const menuItems = [
     }
 ];
 
+
 onMounted(async () => {
     try {
         const response = await ProfileService.getProfile();
-        
+        console.log('Respuesta completa:', response);
+        console.log('Datos del usuario:', user.value);
 
         if (response?.data) {
-            userName.value = response.data.name || 'Usuario'; // Establecer el nombre del usuario
+            user.value = response.data;
         } else {
             console.warn('Datos del perfil no están disponibles.');
         }
@@ -94,17 +106,11 @@ onMounted(async () => {
                         />
                     </g>
                 </svg>
-
                 <span>LotteryHub</span>
             </router-link>
         </div>
 
         <div class="layout-topbar-actions">
-
-            
-           
-          
-
             <div class="layout-config-menu">
                 <button type="button" class="layout-topbar-action" @click="toggleDarkMode">
                     <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
@@ -133,10 +139,7 @@ onMounted(async () => {
                     <Button class="layout-topbar-action" @click="toggleProfileMenu"> <i class="pi pi-user"></i> <span>Profile</span> </Button> <Menu :model="menuItems" popup ref="profileMenu" />
                 </div>
             </div>
-
-                <OverlayBadge value="4" severity="danger" class="inline-flex">
-                    <Avatar label="" class="mr-2" size="large" style="background-color: #ece9fc; color: #2a1261" >{{ userInitials }}</Avatar>
-                </OverlayBadge>
+            
         </div>
     </div>
 </template>

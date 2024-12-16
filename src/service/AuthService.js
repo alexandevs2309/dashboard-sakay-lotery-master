@@ -30,6 +30,32 @@ export function login(email, password) {
     });
 }
 
+export function enableTwoFactor() {
+  return apiClient.post('/2fa/toggle/', { enable_2fa: true })
+    .then(response => {
+      console.log('2FA habilitado:', response.data);
+      return response;
+    })
+    .catch(error => {
+      console.error('Error al habilitar 2FA:', error);
+      throw error;
+    });
+}
+
+
+export function verifyTwoFactorCode(code) {
+  return apiClient.post('/2fa/verify/', { code })
+    .then(response => {
+      console.log('Código 2FA verificado:', response.data);
+      return response;
+    })
+    .catch(error => {
+      console.error('Error al verificar el código 2FA:', error);
+      throw error;
+    });
+}
+
+
 export function logout() {
   // Limpiar todas las cookies relacionadas con la autenticación
   console.log("Ejecutando logout..."); // Agrega esta línea

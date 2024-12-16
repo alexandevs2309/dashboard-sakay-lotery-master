@@ -31,10 +31,10 @@ const handleLogin = async () => {
     return;
   }
 
-  if (!checked.value) {
-    error.value = 'Debes aceptar los términos y condiciones.';
-    return;
-  }
+  // if (!checked.value) {
+  //   error.value = 'Debes aceptar los términos y condiciones.';
+  //   return;
+  // }
 
   if(password.value.length < 8){
     error.value = 'La contraseña debe tener al menos 8 caracteres.';
