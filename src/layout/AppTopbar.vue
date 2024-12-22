@@ -65,16 +65,15 @@ const menuItems = [
 onMounted(async () => {
     try {
         const response = await ProfileService.getProfile();
-        console.log('Respuesta completa:', response);
-        console.log('Datos del usuario:', user.value);
+        
 
         if (response?.data) {
             user.value = response.data;
         } else {
-            console.warn('Datos del perfil no están disponibles.');
+            
         }
     } catch (error) {
-        console.error('Error al obtener el perfil:', error);
+      
     }
 });
 

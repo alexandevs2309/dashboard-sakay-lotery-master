@@ -14,6 +14,7 @@ import { useAuthStore } from '@/stores/auth';
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
+import Toast from 'primevue/toast';
 
 export default {
     components: {
@@ -24,7 +25,8 @@ export default {
         Password,
         InputText,
         FloatingConfigurator,
-        ConfirmDialog
+        ConfirmDialog,
+        Toast
     },
     setup() {
         const toast = useToast();
@@ -32,12 +34,12 @@ export default {
 
         const userStatus = ref('online');
 
-        const security = ref({
-            twoFactor: false
-        });
+        const twoFactorEnabled = ref(false); // Usar un ref simple
+
 
         const showVerificationInput = ref(false);
         const twoFactorCode = ref('');
+
 
         const isLoading = ref(false);
         const user = ref({
@@ -48,7 +50,6 @@ export default {
             phone: '',
             address: '',
             role: '',
-            two_factor: false
         });
 
         const canEdit = computed(() => user.value.role === 'ADMIN');
@@ -67,24 +68,28 @@ export default {
 
         const toggleTwoFactor = async () => {
             try {
-                const response = await apiClient.post('/2fa/toggle/', {
-                    enable_2fa: security.value.twoFactor
-                });
+               
+                const newState = !twoFactorEnabled.value;
+
+                const response = await apiClient.post('/two_factor/toggle/', {
+                        enable_2fa: newState
+                    });
+
+                    console.log('Respuesta del servidor:', response.data);
+
+                    twoFactorEnabled.value = newState;
+
 
                 toast.add({
                     severity: 'success',
                     summary: '2FA',
-                    detail: `Código de verificación: ${response.data.verification_code}`,
+                    detail: response.data.message || (newState ? '2FA habilitado.' : '2FA deshabilitado.' ),
                     life: 5000
-                    // detail: response.data.message,
-                    // life: 3000,
                 });
 
-                if (security.value.twoFactor) {
-                    showVerificationInput.value = true;
-                } else {
-                    showVerificationInput.value = false;
-                }
+                showVerificationInput.value = newState;
+
+                
             } catch (error) {
                 toast.add({
                     severity: 'error',
@@ -98,6 +103,7 @@ export default {
         const verifyTwoFactor = async () => {
             try {
                 const response = await apiClient.post('/2fa/verify/', {
+                    
                     code: twoFactorCode.value
                 });
 
@@ -132,9 +138,7 @@ export default {
         const fetchUserData = async () => {
             try {
                 const response = await apiClient.get('/profile/');
-                console.log('Respuesta completa:', response);
-                console.log('Datos recibidos:', response.data);
-                console.log('Propiedades en los datos:', Object.keys(response.data));
+               
                 if (response.status === 200) {
                     const data = response.data;
 
@@ -149,7 +153,7 @@ export default {
                     user.value.address = data.profile?.address || '';
                     user.value.biography = data.profile?.biography || '';
 
-                    security.value.twoFactor = data.two_factor || false;
+                    twoFactorEnabled.value = response.data.two_factor_enabled || false;
                     user.value.role = data.role || '';
 
                     Cookies.set(
@@ -199,7 +203,7 @@ export default {
                 formData.append('email', user.value.email);
                 formData.append('phone', user.value.phone);
                 formData.append('address', user.value.address);
-                formData.append('two_factor', security.value.twoFactor);
+                formData.append('two_factor', twoFactorEnabled.value);
 
                 if (passwords.value.current && passwords.value.new) {
                     formData.append('current_password', passwords.value.current);
@@ -253,14 +257,13 @@ export default {
         return {
             user,
             passwords,
-            security,
             isLoading,
             saveChanges,
             validatePasswords,
             userInitials,
             canEdit,
             userStatus,
-            security,
+            twoFactorEnabled,
             toggleTwoFactor,
             showVerificationInput,
             twoFactorCode,
@@ -343,32 +346,33 @@ export default {
                 </div>
             </div>
 
-           <!-- Opciones de Seguridad -->
+            <!-- Opciones de Seguridad -->
             <div class="bg-white dark:bg-surface-800 p-6 rounded-md shadow-md">
-              <h3 class="text-lg font-semibold text-surface-700 dark:text-surface-0 mb-4">Opciones de Seguridad</h3>
-              <div class="flex items-center space-x-4">
-                <!-- Checkbox para habilitar/deshabilitar 2FA -->
-                <Checkbox v-model="security.twoFactor" @change="toggleTwoFactor" label="Habilitar 2FA" />
-                <label for="two-factor" class="text-surface-700 dark:text-surface-300">
-                  Autenticación de Dos Factores
-                </label>
+                <h3 class="text-lg font-semibold text-surface-700 dark:text-surface-0 mb-4">Opciones de Seguridad</h3>
+                <div class="flex items-center space-x-4">
+                    <!-- Checkbox para habilitar/deshabilitar 2FA -->
+                    <Checkbox 
+                            :modelValue="twoFactorEnabled"
+                            @update:modelValue="toggleTwoFactor"
+                            :binary="true"
+                        />                    
+                        <label for="two-factor" class="text-surface-700 dark:text-surface-300"> Autenticación de Dos Factores </label>
 
-                <!-- Mostrar campo para el código de 2FA solo si es necesario -->
-                <div v-if="showVerificationInput">
-                  <h3>Ingrese el código de verificación</h3>
-                  <InputText v-model="twoFactorCode" placeholder="Código de 6 dígitos" />
-                  <Button label="Verificar Código" @click="verifyTwoFactor" />
+                    <!-- Mostrar campo para el código de 2FA solo si es necesario -->
+                    <div v-if="showVerificationInput">
+                        <h3>Ingrese el código de verificación</h3>
+                        <InputText v-model="twoFactorCode" placeholder="Código de 6 dígitos" />
+                        <Button label="Verificar Código" @click="verifyTwoFactor" />
+                    </div>
                 </div>
-              </div>
             </div>
-
 
             <!-- Save Button -->
             <Button type="button" @click="requireConfirmation()" label="Guardar Cambios"></Button>
         </div>
     </div>
 
-    <template>
+    
         <ConfirmDialog group="headless">
             <template #container="{ message, acceptCallback, rejectCallback }">
                 <div class="flex flex-col items-center p-8 bg-surface-0 dark:bg-surface-900 rounded">
@@ -386,5 +390,5 @@ export default {
         </ConfirmDialog>
 
         <Toast />
-    </template>
+    
 </template>

@@ -3,88 +3,160 @@ import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
-
+import axios from '@/api/axios';
 import { login } from '@/service/AuthService';
 
-import InputText from 'primevue/inputtext'; 
-import Checkbox from 'primevue/checkbox'; 
-import Button from 'primevue/button'; 
+import { enableTwoFactor, verifyTwoFactorCode } from '@/service/AuthService';
+
+import InputText from 'primevue/inputtext';
+import Checkbox from 'primevue/checkbox';
+import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Toast from 'primevue/toast';
-
+import Dialog from 'primevue/dialog';
+import Image from 'primevue/image';
+import InputOtp from 'primevue/inputotp';
 
 const email = ref('');
 const password = ref('');
-const checked = ref(false);
+const remenberMe = ref(false);
 const error = ref(null);
 const loading = ref(false);
 const router = useRouter();
+const forgotPasswordEmail = ref('');
 
-const authStore = useAuthStore()
+const showTwoFactorDialog = ref(false);
+const twoFactorCode = ref('');
+const showForgotPasswordDialog = ref(false);
+const qrCodeUrl = ref('');
 
+const authStore = useAuthStore();
 
+// Función para obtener el código QR (fuera de handleLogin)
+const getTwoFactorQrCode = async () => {
+    try {
+        const response = await axios.get('/two_factor/toggle/', { responseType: 'blob' }); // Obtener la imagen como blob
 
+        // Convertir la imagen a data URL
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            qrCodeUrl.value = e.target.result; 
+        };
+        reader.readAsDataURL(response.data); 
 
-const handleLogin = async () => {
-  if (!email.value || !password.value) {
-    error.value = 'Por favor completa todos los campos.';
-    return;
-  }
-
-  // if (!checked.value) {
-  //   error.value = 'Debes aceptar los términos y condiciones.';
-  //   return;
-  // }
-
-  if(password.value.length < 8){
-    error.value = 'La contraseña debe tener al menos 8 caracteres.';
-    return;
-  }
-
-  if(!email.value.includes('@')){
-    error.value = 'El correo electrónico no es válido.';
-    return;
-  }
-
-  if(!email.value.includes('.')){
-    error.value = 'El correo electrónico no es válido.';
-    return;
-  }
-
-  loading.value = true; // Mostrar el indicador de carga
-  error.value = null;
-
-  try {
-    const response = await login(email.value, password.value); 
-
-    // Verifica la respuesta del login
-    if (response && response.data && response.data.access) {
-      authStore.setToken(response.data.access)
-      // Redirige al usuario
-      router.push('/'); 
-    } else {
-      // Maneja el error del login
-      error.value = 'Error al iniciar sesión.'; 
+    } catch (error) {
+        console.error('Error al obtener el código QR:', error);
+        // Manejar el error, por ejemplo, mostrar un mensaje al usuario
+        return null;
     }
-  } catch (error) {
-    // Maneja el error del login
-    if(error.response &&  error.response.status === 500 ){
-      error.value = 'Credenciales incorrectas. , email o contracena incorrecta';
-    }else{
-      error.value = error.response?.data?.detail || 'Error al iniciar sesión.';
-    }
-  } finally {
-    loading.value = false; // Ocultar el indicador de carga
-  }
 };
 
+const handleLogin = async () => {
   
+       // 1. Comprobar si el email está vacío
+       if (!email.value) {
+        error.value = 'Por favor ingresa tu correo electrónico.';
+        Toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor ingresa tu correo electrónico.', life: 3000 });
+        return;
+    }
 
+    // 2. Comprobar si la contraseña está vacía
+    if (!password.value) {
+        error.value = 'Por favor ingresa tu contraseña.';
+        Toast.add({ severity: 'error', summary: 'Error', detail: 'Por favor ingresa tu contraseña.', life: 3000 });
+        return;
+    }
+
+    // 3. Comprobar la longitud de la contraseña
+    if (password.value.length < 8) {
+        error.value = 'La contraseña debe tener al menos 8 caracteres.';
+        Toast.add({ severity: 'error', summary: 'Error', detail: 'La contraseña debe tener al menos 8 caracteres.', life: 3000 });
+        return;
+    }
+
+    // 4. Validar el formato del email
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isValidEmail(email.value)) {
+        error.value = 'El correo electrónico no es válido.';
+        Toast.add({ severity: 'error', summary: 'Error', detail: 'El correo electrónico no es válido.', life: 3000 });
+        return;
+    }
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+
+
+        const response = await login(email.value, password.value, remenberMe.value);
+
+        // Verificar el estado de 2FA del usuario
+        if (response.data.user.two_factor_enabled) { 
+            // Obtener la URL del código QR (método GET)
+            qrCodeUrl.value = await getTwoFactorQrCode();
+            console.log(qrCodeUrl.value); 
+
+            // Mostrar el diálogo de 2FA
+        showTwoFactorDialog.value = true; 
+        } else {
+            // 2FA no está habilitada, redirigir al usuario
+            authStore.setToken(response.data.access);
+            router.push('/'); 
+        }
+
+        
+
+    } catch (error) {
+        if (error.response && error.response.status === 500) {
+            error.value = 'Credenciales incorrectas. Email o contraseña incorrecta.';
+        } else if (error.response && error.response.status === 401) {
+            error.value = 'Usuario no autorizado.';
+        } else {
+            error.value = error.response?.data?.detail || 'Error al iniciar sesión.';
+        }
+    } finally {
+        loading.value = false;
+    }
+};
+
+const handleForgotPassword = async () => {
+    try {
+        // Llamada a la API para iniciar el proceso de contraseña olvidada
+        await api.post('password_reset/', { email: forgotPasswordEmail.value }); 
+
+        // Mostrar un mensaje de éxito al usuario (puedes usar un Toast o un Alert)
+        Toast.add({ 
+            severity: 'success', 
+            summary: 'Éxito', 
+            detail: 'Se ha enviado un correo electrónico con las instrucciones para restablecer la contraseña', 
+            life: 3000 
+        });
+        
+        showForgotPasswordDialog.value = false; // Cierra el diálogo después del envío
+    } catch (error) {
+        // Manejar el error (muestra un mensaje de error al usuario)
+        error.value = 'Error al enviar la solicitud de restablecimiento de contraseña.'; 
+        // O puedes usar un Toast:
+        Toast.add({ severity: 'error', summary: 'Error', detail: error.response?.data?.detail || 'Error al enviar la solicitud', life: 3000 });
+    }
+};
+
+
+const handleTwoFactorVerification = async () => {
+    try {
+        await verifyTwoFactorCode(twoFactorCode.value);
+        // 2FA verificado, redirigir al usuario
+        router.push('/'); 
+    } catch (error) {
+        // Manejar el error de verificación de 2FA
+        // Mostrar un mensaje de error al usuario
+        error.value = 'Código de verificación incorrecto.';
+    }
+};
 </script>
 
-<template>
 
-  
+<template>
     <FloatingConfigurator />
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center">
@@ -108,12 +180,13 @@ const handleLogin = async () => {
                                 />
                             </g>
                         </svg>
+
                         <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to LoteryHub!</div>
-                        
+
                         <span class="text-muted-color font-medium">Sign in to continue</span>
                     </div>
 
-                    <form @submit.prevent="handleLogin" >
+                    <form @submit.prevent="handleLogin">
                         <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
                         <InputText id="email1" v-model="email" type="email" placeholder="Email address" class="w-full md:w-[30rem]" />
 
@@ -122,16 +195,45 @@ const handleLogin = async () => {
 
                         <div class="flex items-center justify-between mt-2 mb-8 gap-8">
                             <div class="flex items-center">
-                                <Checkbox v-model="checked" id="rememberme1" binary class="mr-2"></Checkbox>
+                                <Checkbox v-model="remenberMe" id="rememberme1" binary class="mr-2"></Checkbox>
                                 <label for="rememberme1">Remember me</label>
                             </div>
-                            <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
+                            <span @click="showForgotPasswordDialog = true" class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                         </div>
                         <Button type="submit" label="Sign In" class="w-full mt-4" :loading="loading"></Button>
-                        <Message v-if="error && !error.includes('email') && !error.includes('password')" class="p-error text-center">{{ error }}</Message> 
+                        <Message severity="error" v-if="error && !error.includes('email') && !error.includes('password')" class="p-error mt-5 text-center">{{ error }}</Message>
                     </form>
 
-                  </div>
+
+                    <Toast :baseZIndex="10000" />
+                    <Dialog v-model:visible="showTwoFactorDialog" header="Autenticación de dos factores">
+                        <div class="flex flex-col items-center"> 
+                            <Image v-if="qrCodeUrl" :src="qrCodeUrl" alt="2FA" class="my-5" /> 
+
+                            <InputOtp v-model="twoFactorCode" :length="6" style="gap: 0">
+                                <template #default="{ attrs, events, index }">
+                                    <input type="text" v-bind="attrs" v-on="events" class="custom-otp-input" />
+                                    <div v-if="index === 3" class="px-4">
+                                        <i class="pi pi-minus" />
+                                    </div>
+                                </template>
+                            </InputOtp>
+                            <div class="flex justify-between mt-8 self-stretch">
+                                <Button label="Resend Code" link class="p-0"></Button>
+                                <Button label="Submit Code" @click="handleTwoFactorVerification"></Button>
+                            </div>
+                        </div>
+                    </Dialog>
+                                        
+                    <Dialog v-model:visible="showForgotPasswordDialog" :modal="true" header="Restablecer contraseña" :style="{ width: '30vw' }">
+                        <label for="email" class="block text-900 text-sm font-medium mb-2">Correo electrónico:</label>
+                        <InputText id="email" v-model="forgotPasswordEmail" type="email" required />
+                        <template #footer>
+                            <Button label="Cancelar" icon="pi pi-times" @click="showForgotPasswordDialog = false" />
+                            <Button label="Enviar" icon="pi pi-check" @click="handleForgotPassword" />
+                        </template>
+                    </Dialog>
+                </div>
             </div>
         </div>
     </div>
@@ -149,7 +251,44 @@ const handleLogin = async () => {
 }
 
 .error-message {
-  color: red;
-  margin-top: 1rem;
+    color: red;
+    margin-top: 1rem;
+}
+
+
+.custom-otp-input {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    appearance: none;
+    text-align: center;
+    transition: all 0.2s;
+    border-radius: 0;
+    border: 1px solid var(--p-inputtext-border-color);
+    background: transparent;
+    outline-offset: -2px;
+    outline-color: transparent;
+    border-right: 0 none;
+    transition: outline-color 0.3s;
+    color: var(--p-inputtext-color);
+}
+
+.custom-otp-input:focus {
+    outline: 2px solid var(--p-focus-ring-color);
+}
+
+.custom-otp-input:first-child,
+.custom-otp-input:nth-child(5) {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.custom-otp-input:nth-child(3),
+.custom-otp-input:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-color: var(--p-inputtext-border-color);
 }
 </style>

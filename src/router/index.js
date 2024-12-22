@@ -266,26 +266,16 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const publicPages = ['/auth/login', '/landing', '/auth/access'];
-    const authRequired = !publicPages.some(page => to.path.startsWith(page));
+    const authRequired = !publicPages.includes(to.path); // Verificar si la ruta actual está en la lista de páginas públicas
   
-    let user = null;
-    try {
-      // Obtener el usuario de la cookie
-      const userFromCookie = Cookies.get('user'); 
-      if (userFromCookie) {
-        user = JSON.parse(userFromCookie); 
-      }
-    } catch (error) {
-      console.error('Error parsing user from cookie:', error);
-      Cookies.remove('user'); // Eliminar la cookie si hay un error al analizarla
+    const token = Cookies.get('token'); // Obtener el token de acceso
+    const isLoggedIn = !!token; // Verificar si el token existe
+  
+    if (authRequired && !isLoggedIn) {
+      next('/auth/login'); // Redirigir a la página de inicio de sesión si no está autenticado
+    } else {
+      next(); // Permitir el acceso a la ruta
     }
-  
-    if (authRequired && !user) {
-      console.log('Redirigiendo a login', { to: to.path, user });
-      return next('/auth/login');
-    }
-  
-    next();
   });
   
   export default router;

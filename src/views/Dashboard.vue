@@ -3,6 +3,7 @@ import { useLayout } from '@/layout/composables/layout';
 import { ProductService } from '@/service/ProductService';
 import InputText from 'primevue/inputtext';
 import { computed, onMounted, ref, watch } from 'vue';
+import  apiClient from '@/api/axios';
 
 // Importar valores de tema y colores
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
@@ -15,6 +16,14 @@ const chartOptions = ref(null);
 const chartOptions2 = ref(null);
 
 const loading = ref(false);
+
+
+
+const  user = ref({
+    first_name: '',
+    last_name: '',
+})
+
 
 // Datos de loterías y opciones de menú
 const lotteries = ref([
@@ -31,6 +40,25 @@ const items = ref([
     { label: 'Add New', icon: 'pi pi-fw pi-plus' },
     { label: 'Remove', icon: 'pi pi-fw pi-trash' }
 ]);
+
+
+
+const fetchUserData = async () => {
+    try {
+        const response = await apiClient.get('/profile/');
+        if (response.status === 200) {
+            const data = response.data;
+            user.value.first_name = data.first_name || 'Usuario';
+            user.value.last_name = data.last_name || 'Sin apellido';
+        }
+    } catch (error) {
+        console.error('Error al obtener los datos:', error);
+    }
+};
+
+onMounted(() => {
+    fetchUserData();
+});
 
 // Configuración de datos y opciones de gráficos
 function getChartData() {
@@ -135,6 +163,12 @@ const mayus = computed({
 });
 
 
+watch([getPrimary, getSurface, isDarkTheme], () => {
+    chartData.value = getChartData();
+    chartOptions.value = getChartOptions();
+    chartData2.value = getChartData2();
+    chartOptions2.value = getChartOptions2();
+});
 
 const dialogoTicketVisible = ref(false);
 
@@ -161,6 +195,8 @@ const detallesTicket = ref({
     montoTotal: 204
 });
 
+
+
 </script>
 
 
@@ -170,7 +206,7 @@ const detallesTicket = ref({
     <!-- Información del usuario -->
     <div class=" card flex justify-between items-center p-6 rounded-lg shadow-md mb-10">
         <div class="flex flex-col ">
-            <h4 class="font-bold text-3xl  tracking-wide">Juan de los Santos</h4>
+            <h4 class="font-bold text-3xl  tracking-wide">{{user.first_name}} {{ user.last_name }}</h4>
             <p class="text-sm  mt-1 italic">
                 Última Actualización: <span class="font-semibold">2024 / 05 / 19 7:55:33 PM</span>
             </p>
@@ -239,85 +275,6 @@ const detallesTicket = ref({
     </Dialog>
 
    
-    <!-- Grilla de tarjetas de resumen -->
-    <!-- <div class=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 "> -->
-    <!-- Tarjeta: Loterías -->
-    <!-- <div class="card  rounded-lg shadow-md flex flex-col ">
-        <div class="flex justify-between mb-2 ">
-            <div>
-                <span class="block  font-medium mb-2">Loterías</span>
-                <div class="flex gap-4">
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">2,200</div>
-                        <p class="text-sm ">Premios</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">5,500</div>
-                        <p class="text-sm ">Venta</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">0,000</div>
-                        <p class="text-sm ">Comisión</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">5,800</div>
-                        <p class="text-sm ">Utilidad</p>
-                    </div>
-                </div>
-            </div>
-            <i class="pi pi-dollar text-orange-500 text-2xl"></i>
-        </div>
-        <span class="text-green-500 font-medium">+52%</span> <span >desde la última semana</span>
-    </div> -->
-
-    <!-- Tarjeta: Premios de hoy -->
-    <!-- <div class="card p-6  rounded-lg shadow-md flex flex-col h-auto">
-        <div class="flex justify-between mb-4">
-            <div>
-                <span class="block  font-medium mb-2 ">Premios de hoy</span>
-                <div class="text-xl font-semibold ">0</div>
-            </div>
-            <i class="pi pi-users text-cyan-500 text-2xl"></i>
-        </div>
-        <div class="flex justify-between mb-2">
-            <div class="text-center">
-                <span class="block  font-medium">Premios reclamados</span>
-                <div class="text-xl font-semibold ">0</div>
-            </div>
-            <div class="text-center">
-                <span class="block  font-medium">Premios pendientes</span>
-                <div class="text-xl font-semibold ">0</div>
-            </div>
-        </div>
-        <hr class="mb-2 border-gray-200">
-        <div class="text-right">
-            <span class="block  font-medium">Premios Total</span>
-            <div class="text-xl font-semibold ">0</div>
-        </div>
-    </div> -->
-
-    <!-- Tabla de resultados de loterías -->
-    <!-- <div class="card p-6  rounded-lg shadow-md flex flex-col h-auto">
-        <div class="bg-green-500 text-white font-semibold p-3 rounded-t-lg">Resultados</div>
-        <DataTable :value="lotteries" :rows="5" :paginator="true" responsiveLayout="scroll">
-            <Column style="width: 20%" header="Lotería">
-                <template #body="slotProps">
-                    <img :src="`/demo/images/Lotery/${slotProps.data.image}`" alt="Lotería" width="50"
-                        class="rounded-full shadow-md" />
-                </template>
-            </Column>
-            <Column field="name" header="Nombre" :sortable="true"></Column>
-            <Column field="time" header="Hora" :sortable="true"></Column>
-            <Column field="winningNumbers" header="Números Ganadores">
-                <template #body="slotProps">
-                    <span class="text-green-600">{{ slotProps.data.winningNumbers.join(', ') }}</span>
-                </template>
-            </Column>
-        </DataTable>
-    </div>
-</div> -->
-
-
 <div class="bg-surface-50 dark:bg-surface-950 px-6 py-8 md:px-12 lg:px-20">
         <div class="grid grid-cols-12 gap-4">
             <div class="col-span-12 md:col-span-6 lg:col-span-4">

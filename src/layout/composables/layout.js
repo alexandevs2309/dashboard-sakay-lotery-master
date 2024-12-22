@@ -1,4 +1,11 @@
-import { computed, reactive, readonly } from 'vue';
+import { computed, reactive, readonly , onMounted} from 'vue';
+import Cookies from 'js-cookie';
+
+
+
+
+
+
 
 const layoutConfig = reactive({
     preset: 'Aura',
@@ -19,6 +26,18 @@ const layoutState = reactive({
 });
 
 export function useLayout() {
+
+    onMounted(() => {
+        // Recuperar la preferencia al cargar el componente
+        const savedDarkMode = Cookies.get('darkMode');
+        if (savedDarkMode) {
+            // Si la preferencia guardada es diferente del estado actual, cambiar el tema
+            if (JSON.parse(savedDarkMode) !== layoutConfig.darkTheme) {
+                executeDarkModeToggle();
+            }
+        }
+    });
+
     const setPrimary = (value) => {
         layoutConfig.primary = value;
     };
@@ -52,6 +71,8 @@ export function useLayout() {
     const executeDarkModeToggle = () => {
         layoutConfig.darkTheme = !layoutConfig.darkTheme;
         document.documentElement.classList.toggle('app-dark');
+
+        Cookies.set('darkMode', layoutConfig.darkTheme, { expires: 365 });
     };
 
     const onMenuToggle = () => {
