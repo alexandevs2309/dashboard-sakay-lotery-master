@@ -1,20 +1,22 @@
 <script>
 import { ref, onMounted, computed } from 'vue';
-import apiClient from '@/api/axios';
 import Cookies from 'js-cookie';
+import { useAuthStore } from '@/stores/authStore'; // Importamos el store de autenticación
+
+import apiClient from '@/api/axios';
 import { ProfileService } from '@/service/ProfileService';
+
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import InputText from 'primevue/inputtext';
 import InputMask from 'primevue/inputmask';
 import Password from 'primevue/password';
-
-import { useAuthStore } from '@/stores/auth';
 import ConfirmDialog from 'primevue/confirmdialog';
+import Toast from 'primevue/toast';
+
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import Toast from 'primevue/toast';
 
 export default {
     components: {
@@ -36,6 +38,7 @@ export default {
 
         const twoFactorEnabled = ref(false); // Usar un ref simple
 
+        const authStore = useAuthStore(); // Accedemos al store
 
         const showVerificationInput = ref(false);
         const twoFactorCode = ref('');
@@ -67,40 +70,54 @@ export default {
         });
 
         const toggleTwoFactor = async () => {
-            try {
-               
-                const newState = !twoFactorEnabled.value;
+    try {
+        const newState = !twoFactorEnabled.value;
 
-                const response = await apiClient.post('/two_factor/toggle/', {
-                        enable_2fa: newState
-                    });
+        const response = await apiClient.post('/two_factor/toggle/', {
+            enable_2fa: newState
+        });
 
-                    console.log('Respuesta del servidor:', response.data);
+        twoFactorEnabled.value = newState;
 
-                    twoFactorEnabled.value = newState;
+        // Actualiza la cookie con el nuevo estado de 2FA
+        Cookies.set('user', JSON.stringify({
+            first_name: user.value.first_name,
+            last_name: user.value.last_name,
+            email: user.value.email,
+            two_factor_enabled: newState  // Actualiza el estado de 2FA en la cookie
+        }), { expires: 7 });
 
+        toast.add({
+            severity: 'success',
+            summary: '2FA',
+            detail: response.data.message || (newState ? '2FA habilitado.' : '2FA deshabilitado.'),
+            life: 5000
+        });
 
-                toast.add({
-                    severity: 'success',
-                    summary: '2FA',
-                    detail: response.data.message || (newState ? '2FA habilitado.' : '2FA deshabilitado.' ),
-                    life: 5000
-                });
-
-                showVerificationInput.value = newState;
-
-                
-            } catch (error) {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'No se pudo actualizar 2FA',
-                    life: 3000
-                });
-            }
-        };
+        showVerificationInput.value = newState;
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo actualizar 2FA',
+            life: 3000
+        });
+    }
+};
 
         const verifyTwoFactor = async () => {
+
+            if (!twoFactorEnabled.value) {
+        toast.add({
+            severity: 'error',
+            summary: '2FA Deshabilitado',
+            detail: 'La autenticación de dos factores está deshabilitada, no es necesario verificar el código.',
+            life: 3000
+        });
+        return;  // Evitar ejecución si 2FA no está habilitado
+    }
+
+
             try {
                 const response = await apiClient.post('/2fa/verify/', {
                     

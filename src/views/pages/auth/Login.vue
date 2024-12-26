@@ -1,13 +1,13 @@
 <script setup>
 import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/authStore';
+
 import { useRouter } from 'vue-router';
 import axios from '@/api/axios';
 import { login } from '@/service/AuthService';
 
 import { enableTwoFactor, verifyTwoFactorCode } from '@/service/AuthService';
-
 import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
@@ -87,20 +87,27 @@ const handleLogin = async () => {
 
     try {
 
-
+        console.log('Datos de inicio de sesión:', email.value, password.value, remenberMe.value);
         const response = await login(email.value, password.value, remenberMe.value);
+        console.log('Respuesta del servidor al intentar loguearse: ', response);
+        
 
         // Verificar el estado de 2FA del usuario
         if (response.data.user.two_factor_enabled) { 
+            console.log('2FA habilitado', response.data.user.two_factor_enabled);
             // Obtener la URL del código QR (método GET)
+        
             qrCodeUrl.value = await getTwoFactorQrCode();
-            console.log(qrCodeUrl.value); 
 
             // Mostrar el diálogo de 2FA
         showTwoFactorDialog.value = true; 
         } else {
+              // Guardamos el token en las cookies en lugar de localStorage
+              authStore.setToken(response.data.access);  // Se guarda el token en las cookies
+            authStore.setUser(response.data.user);    // Se guarda la información del usuario
+           
+
             // 2FA no está habilitada, redirigir al usuario
-            authStore.setToken(response.data.access);
             router.push('/'); 
         }
 

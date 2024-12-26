@@ -4,6 +4,9 @@ import AdministrarEmpleados from '@/views/pages/AdministrarEmpleados.vue';
 import Reportes from '@/views/pages/Reportes.vue';
 import Sorteos from '@/views/pages/Sorteos.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+
+import { useAuthStore } from '@/stores/authStore'; // Importar el store de autenticación
+
 import Cookies from 'js-cookie';
 
 
@@ -268,12 +271,20 @@ router.beforeEach((to, from, next) => {
     const publicPages = ['/auth/login', '/landing', '/auth/access'];
     const authRequired = !publicPages.includes(to.path); // Verificar si la ruta actual está en la lista de páginas públicas
   
+    const authStore = useAuthStore(); // Obtener la instancia de AuthStore
     const token = Cookies.get('token'); // Obtener el token de acceso
-    const isLoggedIn = !!token; // Verificar si el token existe
+    const isLoggedIn = !!token || authStore.token; // Verificar si el token existe
   
+    
+
     if (authRequired && !isLoggedIn) {
       next('/auth/login'); // Redirigir a la página de inicio de sesión si no está autenticado
-    } else {
+      
+    }
+    else if (to.path === '/auth/login' && isLoggedIn) {
+        next('/'); // Redirige al dashboard si ya está autenticado y trata de acceder al login
+        }
+    else {
       next(); // Permitir el acceso a la ruta
     }
   });
