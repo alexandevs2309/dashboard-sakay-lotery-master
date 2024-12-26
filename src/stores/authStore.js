@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import Cookies from 'js-cookie';
 
 
+
 // Supongamos que tienes un método en el store para configurar el estado
 const loginUser = (userData) => {
   this.user = userData.user; // Guarda el usuario
