@@ -3,7 +3,8 @@ import { useLayout } from '@/layout/composables/layout';
 import { ProductService } from '@/service/ProductService';
 import InputText from 'primevue/inputtext';
 import { computed, onMounted, ref, watch } from 'vue';
-import  apiClient from '@/api/axios';
+import apiClient from '@/api/axios';
+import { getResults } from '@/service/LotteryService';
 
 // Importar valores de tema y colores
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
@@ -18,23 +19,86 @@ const chartOptions2 = ref(null);
 const loading = ref(false);
 
 
+const premiosHoy = ref(0);
+const premiosReclamados = ref(0);
+const premiosPendientes = ref(0);
 
-const  user = ref({
+const fetchPremiosHoy = async () => {
+    try {
+        const response = await apiClient.get('/premios-hoy');  // URL de la API
+        premiosHoy.value = response.data.premiosHoy || 0;
+        premiosReclamados.value = response.data.premiosReclamados || 0;
+        premiosPendientes.value = response.data.premiosPendientes || 0;
+    } catch (error) {
+        console.error('Error al obtener los premios de hoy:', error);
+    }
+};
+
+onMounted(() => {
+    fetchPremiosHoy();
+});
+
+
+
+
+// Datos de Loterías
+const premios = ref(0);
+const venta = ref(0);
+const comision = ref(0);
+const utilidad = ref(0);
+
+const fetchLoteriaData = async () => {
+
+    try {
+        const response = await apiClient.get('/loteria-data');  // URL de la API
+        premios.value = response.data.premios || 0;
+        venta.value = response.data.venta || 0;
+        comision.value = response.data.comision || 0;
+        utilidad.value = response.data.utilidad || 0;
+    } catch (error) {
+        console.error('Error al obtener los datos de lotería:', error);
+    }
+};
+
+onMounted(() => {
+    fetchLoteriaData();
+});
+
+
+
+const user = ref({
     first_name: '',
     last_name: '',
 })
 
 
 // Datos de loterías y opciones de menú
-const lotteries = ref([
-    { image: 'real.jpg', name: 'Loto Real', time: '18:00', winningNumbers: ['12 -34 - 56'] },
-    { image: 'nacional.png', name: 'Lotería Nacional', time: '20:00', winningNumbers: ['98 - 76 -54'] },
-    { image: 'loteria-florida-dia.png', name: 'Florida', time: '20:00', winningNumbers: ['09-87-65'] },
-    { image: 'leidsa.jpg', name: 'Leidsa', time: '20:00', winningNumbers: ['98-89-00'] },
-    { image: 'primera.jpg', name: 'Primera', time: '20:00', winningNumbers: ['98 - 76 - 54'] },
-    { image: 'newyork.png', name: 'New York', time: '20:00', winningNumbers: ['76 - 54 - 56'] },
-    { image: 'anguila.png', name: 'Anguila', time: '20:00', winningNumbers: ['54 - 46 - 79'] },
-]);
+
+const lotteries = ref([]);
+const fetchLotteries = async () => {
+
+    try {
+        const response = await apiClient.get('/lotteries/');
+        lotteries.value = response.data;
+        console.log(response.data)
+
+    } catch (error) {
+        console.error('Error al obtener los datos:', error);
+    }
+};
+onMounted(() => {
+    fetchLotteries();
+});
+
+// const lotteries = ref([
+//     { image: 'real.jpg', name: 'Loto Real', time: '18:00', winningNumbers: ['12 -34 - 56'] },
+//     { image: 'nacional.png', name: 'Lotería Nacional', time: '20:00', winningNumbers: ['98 - 76 -54'] },
+//     { image: 'loteria-florida-dia.png', name: 'Florida', time: '20:00', winningNumbers: ['09-87-65'] },
+//     { image: 'leidsa.jpg', name: 'Leidsa', time: '20:00', winningNumbers: ['98-89-00'] },
+//     { image: 'primera.jpg', name: 'Primera', time: '20:00', winningNumbers: ['98 - 76 - 54'] },
+//     { image: 'newyork.png', name: 'New York', time: '20:00', winningNumbers: ['76 - 54 - 56'] },
+//     { image: 'anguila.png', name: 'Anguila', time: '20:00', winningNumbers: ['54 - 46 - 79'] },
+// ]);
 
 const items = ref([
     { label: 'Add New', icon: 'pi pi-fw pi-plus' },
@@ -206,7 +270,7 @@ const detallesTicket = ref({
     <!-- Información del usuario -->
     <div class=" card flex justify-between items-center p-6 rounded-lg shadow-md mb-10">
         <div class="flex flex-col ">
-            <h4 class="font-bold text-3xl  tracking-wide">{{user.first_name}} {{ user.last_name }}</h4>
+            <h4 class="font-bold text-3xl  tracking-wide">{{ user.first_name }} {{ user.last_name }}</h4>
             <p class="text-sm  mt-1 italic">
                 Última Actualización: <span class="font-semibold">2024 / 05 / 19 7:55:33 PM</span>
             </p>
@@ -219,22 +283,24 @@ const detallesTicket = ref({
 
     </div>
 
-<!-- Diálogo de código -->
-<Dialog v-model:visible="visible" header="Revisar Ticket" :style="{ width: '25rem' }" :position="position" :modal="true" :draggable="false">
+    <!-- Diálogo de código -->
+    <Dialog v-model:visible="visible" header="Revisar Ticket" :style="{ width: '25rem' }" :position="position"
+        :modal="true" :draggable="false">
         <span class="text-surface-500 dark:text-surface-400 block mb-8">Ingrese Codigo del Ticket.</span>
         <div class="flex items-center gap-4 mb-4">
             <label for="code" class="font-semibold w-24">Codigo</label>
             <InputText id="codigoHex" v-model="mayus" @input="validarHexadecimal" class="flex-auto" autocomplete="on" />
-            <small v-if="error" class="p-error">Código inválido</small> 
+            <small v-if="error" class="p-error">Código inválido</small>
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-            <Button type="button" label="Save" @click="saveAndShowTicket" :loading="loading" ></Button>
+            <Button type="button" label="Save" @click="saveAndShowTicket" :loading="loading"></Button>
         </div>
     </Dialog>
 
     <!-- Diálogo de Ticket -->
-    <Dialog v-model:visible="dialogoTicketVisible" header="Detalles del Ticket" :style="{ width: '30rem' }" modal :draggable="false">
+    <Dialog v-model:visible="dialogoTicketVisible" header="Detalles del Ticket" :style="{ width: '30rem' }" modal
+        :draggable="false">
         <div>
             <!-- Contenido del ticket -->
             <div class="flex justify-between items-center mb-4">
@@ -268,39 +334,40 @@ const detallesTicket = ref({
                 <p><strong>Monto total:</strong> {{ detallesTicket.montoTotal }}</p>
             </div>
             <div class="flex justify-end gap-2 mt-6">
-                <Button type="button" label="Cerrar" severity="secondary" @click="dialogoTicketVisible = false"></Button>
+                <Button type="button" label="Cerrar" severity="secondary"
+                    @click="dialogoTicketVisible = false"></Button>
                 <Button type="button" label="Cancelar Jugada" class="p-button-danger"></Button>
             </div>
         </div>
     </Dialog>
 
-   
-<div class="bg-surface-50 dark:bg-surface-950 px-6 py-8 md:px-12 lg:px-20">
+
+    <div class="bg-surface-50 dark:bg-surface-950 px-6 py-8 md:px-12 lg:px-20">
         <div class="grid grid-cols-12 gap-4">
             <div class="col-span-12 md:col-span-6 lg:col-span-4">
                 <div class="bg-surface-0 dark:bg-surface-900 shadow p-4 rounded-border">
                     <div class="flex justify-between mb-4">
                         <div>
                             <span class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Loterias</span>
-                            
+
                             <div class="flex gap-3 m-2">
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">2,200</div>
-                        <p class="text-sm ">Premios</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">5,500</div>
-                        <p class="text-sm ">Venta</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">0,000</div>
-                        <p class="text-sm ">Comisión</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-xl font-semibold ">5,800</div>
-                        <p class="text-sm ">Utilidad</p>
-                    </div>
-                    </div>
+                                <div class="text-center">
+                                    <div class="text-xl font-semibold ">{{ premios }}</div>
+                                    <p class="text-sm ">Premios</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xl font-semibold ">{{ venta }}</div>
+                                    <p class="text-sm ">Venta</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xl font-semibold ">{{ comision }}</div>
+                                    <p class="text-sm ">Comisión</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xl font-semibold ">{{ utilidad }}</div>
+                                    <p class="text-sm ">Utilidad</p>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex items-center justify-center  rounded-border w-10 h-10">
                             <i class="pi pi-dollar text-blue-500 dark:text-blue-200 !text-xl" />
@@ -310,28 +377,29 @@ const detallesTicket = ref({
                     <span class="text-surface-500 dark:text-surface-300">desde la última semana</span>
                 </div>
             </div>
-        <div class="col-span-12 md:col-span-6 lg:col-span-3">
+            <div class="col-span-12 md:col-span-6 lg:col-span-3">
                 <div class="bg-surface-0 dark:bg-surface-900 shadow p-4 rounded-border">
                     <div class="flex justify-between mb-4">
                         <div>
-                            <span class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Premios de hoy</span>
+                            <span class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Premios de
+                                hoy</span>
                             <div class="flex justify-between mb-4">
-            <div>
-                <div class="text-xl font-semibold ">0</div>
-            </div>
-        </div>
-      
-        <div class="flex justify-between mb-2">
-            <div class="text-center">
-                <span class="block  font-medium">Premios reclamados</span>
-                <div class="text-xl font-semibold ">0</div>
-            </div>
-            <div class="text-center">
-                <span class="block  font-medium">Premios pendientes</span>
-                <div class="text-xl font-semibold ">0</div>
-            </div>
-        </div>
-        <hr class="mb-2 border-gray-200">
+                                <div>
+                                    <div class="text-xl font-semibold ">{{ premiosHoy }}</div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between mb-2">
+                                <div class="text-center">
+                                    <span class="block  font-medium">Premios reclamados</span>
+                                    <div class="text-xl font-semibold ">{{ premiosReclamados }}</div>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block  font-medium">Premios pendientes</span>
+                                    <div class="text-xl font-semibold ">{{ premiosPendientes }}</div>
+                                </div>
+                            </div>
+                            <hr class="mb-2 border-gray-200">
                         </div>
                         <div class="flex items-center justify-center  rounded-border w-10 h-10">
                             <i class="pi pi-gift text-orange-500 dark:text-orange-200 !text-xl" />
@@ -347,30 +415,35 @@ const detallesTicket = ref({
                 <div class="bg-surface-0 dark:bg-surface-900 shadow p-4 rounded-border">
                     <div class="flex justify-between mb-4">
                         <div>
-                            <span class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Resultados</span>
+                            <span
+                                class="block text-surface-500 dark:text-surface-300 font-medium mb-4">Resultados</span>
                         </div>
-                        <div class="w-10 h-10 flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/30 rounded-border">
+                        <div
+                            class="w-10 h-10 flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/30 rounded-border">
                             <i class="pi pi-inbox text-cyan-500 dark:text-cyan-200 !text-xl" />
                         </div>
                     </div>
                     <DataTable :value="lotteries" :rows="5" :paginator="true" responsiveLayout="scroll">
-            <Column style="width: 20%" header="Lotería">
-                <template #body="slotProps">
-                    <img :src="`/demo/images/Lotery/${slotProps.data.image}`" alt="Lotería" width="50"
-                        class="rounded-full shadow-md" />
-                </template>
-            </Column>
-            <Column field="name" header="Nombre" :sortable="true"></Column>
-            <Column field="time" header="Hora" :sortable="true"></Column>
-            <Column field="winningNumbers" header="Números Ganadores">
-                <template #body="slotProps">
-                    <span class="text-green-600">{{ slotProps.data.winningNumbers.join(', ') }}</span>
-                </template>
-            </Column>
-        </DataTable>
+                        <Column style="width: 20%" header="Lotería">
+                            <template #body="slotProps">
+                                <img :src="slotProps.data.image_url" alt="loteria" width="50"
+                                    class="rounded-full shadow-md" />
+                            </template>
+                        </Column>
+                        <Column field="name" header="Nombre" :sortable="true"></Column>
+                        <Column field="date" header="Fecha" :sortable="true"></Column>
+                        <Column field="number" header="Números Ganadores">
+                            <template #body="slotProps">
+                                <span class="text-green-600">
+                                    {{ slotProps.data.number.split('_').join(', ') }}
+                                </span>
+                            </template>
+                        </Column>
+                    </DataTable>
+
                 </div>
             </div>
-            
+
         </div>
     </div>
 

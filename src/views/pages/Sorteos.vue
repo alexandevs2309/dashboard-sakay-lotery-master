@@ -1,5 +1,47 @@
 
 
+<script>
+import Column from "primevue/column";
+import DataTable from "primevue/datatable";
+import InputText from "primevue/inputtext";
+import { onMounted, ref } from "vue";
+import apiClient from "@/api/axios";
+
+export default {
+  components: { DataTable, Column, InputText },
+  setup() {
+    const sorteos = ref([]);
+    const filters = ref({
+      global: { value: null, matchMode: "contains" },
+    });
+
+    const fetchSorteos = async () => {
+     try {
+      
+      const response  = await apiClient.get('/resultados/');
+      console.log(response)
+      console.log(typeof response)
+      sorteos.value = response.data;
+      
+      console.log(response.status)
+
+     } catch (error) {
+       console.error(error,'error al obtener los sorteos');
+      
+     }
+    };
+
+    onMounted(() => {
+      fetchSorteos();
+    });
+
+
+    return { sorteos, filters };
+  },
+};
+</script>
+
+
 
 
 
@@ -47,47 +89,6 @@
     </DataTable>
   </div>
 </template>
-
-<script>
-import Column from "primevue/column";
-import DataTable from "primevue/datatable";
-import InputText from "primevue/inputtext";
-import { ref } from "vue";
-
-export default {
-  components: { DataTable, Column, InputText },
-  setup() {
-    const sorteos = ref([]);
-
-    const generarDatosFicticios = () => {
-      const loterias = ["La Primera", "New York", "Real", "Florida", "Nacional"];
-      const horarios = ["T", "N"];
-      for (let i = 0; i < 50; i++) {
-        sorteos.value.push({
-          fecha: new Date(2024, 10, Math.ceil(Math.random() * 30))
-            .toISOString()
-            .split("T")[0],
-          loteria: loterias[Math.floor(Math.random() * loterias.length)],
-          horario: horarios[Math.floor(Math.random() * horarios.length)],
-          primero: Math.random() > 0.5 ? Math.ceil(Math.random() * 100) : -1,
-          segundo: Math.random() > 0.5 ? Math.ceil(Math.random() * 100) : -1,
-          tercero: Math.random() > 0.5 ? Math.ceil(Math.random() * 100) : -1,
-          procesado: Math.random() > 0.5 ? 1 : 0,
-        });
-      }
-    };
-
-    generarDatosFicticios();
-
-    const filters = ref({
-      global: { value: null, matchMode: "contains" },
-    });
-
-    return { sorteos, filters };
-  },
-};
-</script>
-
 <style scoped>
-/* Estilos personalizados si son necesarios */
+
 </style>
