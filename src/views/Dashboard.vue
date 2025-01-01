@@ -5,6 +5,8 @@ import InputText from 'primevue/inputtext';
 import { computed, onMounted, ref, watch } from 'vue';
 import apiClient from '@/api/axios';
 import { getResults } from '@/service/LotteryService';
+import WebSocketService from '@/service/WebSocketService';
+
 
 // Importar valores de tema y colores
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
@@ -76,16 +78,30 @@ const user = ref({
 
 const lotteries = ref([]);
 const fetchLotteries = async () => {
-
     try {
         const response = await apiClient.get('/lotteries/');
-        lotteries.value = response.data;
-        console.log(response.data)
+        const today = new Date().toISOString().split('T')[0]; // Fecha actual en formato "YYYY-MM-DD"
 
+        lotteries.value = response.data;
+
+        lotteries.value.sort((a, b) => {
+            const dateA = new Date(a.date).toISOString().split('T')[0];
+            const dateB = new Date(b.date).toISOString().split('T')[0];
+
+            // Priorizar las fechas iguales a la actual
+            if (dateA === today && dateB !== today) return -1;
+            if (dateB === today && dateA !== today) return 1;
+
+            // Ordenar por fecha más reciente primero
+            return new Date(b.date) - new Date(a.date);
+        });
+
+        console.log(lotteries.value);
     } catch (error) {
         console.error('Error al obtener los datos:', error);
     }
 };
+
 onMounted(() => {
     fetchLotteries();
 });
@@ -259,7 +275,15 @@ const detallesTicket = ref({
     montoTotal: 204
 });
 
+// Configuración de WebSocket
+onMounted(() => {
+    WebSocketService.connect(); // Conectar al WebSocket
 
+    // Esperar que el WebSocket se haya abierto antes de enviar un mensaje
+    WebSocketService.addListener('open', () => {
+        WebSocketService.sendMessage({ type: 'chat_message', message: 'Hola, ¿cómo estás?' });
+    });
+});
 
 </script>
 
@@ -423,7 +447,7 @@ const detallesTicket = ref({
                             <i class="pi pi-inbox text-cyan-500 dark:text-cyan-200 !text-xl" />
                         </div>
                     </div>
-                    <DataTable :value="lotteries" :rows="5" :paginator="true" responsiveLayout="scroll">
+                    <DataTable :value="lotteries" :rows="5" :paginator="true" responsiveLayout="scroll"  :sortField="'date'" :sortOrder="-1">
                         <Column style="width: 20%" header="Lotería">
                             <template #body="slotProps">
                                 <img :src="slotProps.data.image_url" alt="loteria" width="50"
@@ -431,7 +455,8 @@ const detallesTicket = ref({
                             </template>
                         </Column>
                         <Column field="name" header="Nombre" :sortable="true"></Column>
-                        <Column field="date" header="Fecha" :sortable="true"></Column>
+                        <Column field="date" header="Fecha" :sortable="true" dateFormat="dd/MM/yyyy HH:mm" :sortField="'date'" :sortOrder="-1">
+                        </Column>                        
                         <Column field="number" header="Números Ganadores">
                             <template #body="slotProps">
                                 <span class="text-green-600">

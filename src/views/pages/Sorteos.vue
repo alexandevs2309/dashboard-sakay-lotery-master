@@ -21,6 +21,7 @@ export default {
       const response  = await apiClient.get('/resultados/');
       console.log(response)
       console.log(typeof response)
+      console.log(response.data)
       sorteos.value = response.data;
       
       console.log(response.status)
@@ -79,9 +80,9 @@ export default {
         </div>
       </template>
 
-      <Column field="fecha" header="Fecha" sortable />
-      <Column field="loteria" header="Lotería" sortable />
-      <Column field="horario" header="Horario" sortable />
+      <Column field="date" header="Fecha" sortable />
+      <Column field="name" header="Lotería" sortable />
+      <Column field="horario_abreviatura" header="Horario" sortable />
       <Column field="primero" header="Primero" sortable />
       <Column field="segundo" header="Segundo" sortable />
       <Column field="tercero" header="Tercero" sortable />
